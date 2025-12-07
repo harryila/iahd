@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model files (large)
+models/
+*.ckpt
+*.h5
+*.pth
+*.pt
+
+# Environment variables (IMPORTANT - don't commit API keys!)
+.env
+.env.local
+*.key
+*_key.txt
+
+# Lambda API key - DO NOT COMMIT
+lambda_api_key.txt
+
+# Results/outputs
+results/
+outputs/
+*.png
+*.jpg
+*.pdf
+plots/
+
+# Logs
+*.log
+logs/
+
