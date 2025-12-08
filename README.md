@@ -156,16 +156,6 @@ git push
 
 ---
 
-## Current Team Members (SSH keys added)
- (though that's what in Eric's but should change/add ours)
-- harry
-- aniroodhan
-- Anannya
-- med-align-sebastien
-- aryan
-
----
-
 ## Instance Types & Pricing
 
 | Type | GPU | Price/hr |
