@@ -1,38 +1,45 @@
 # -*- coding: utf-8 -*-
 """
-The Logit Lens on Llama Activations
+EDGAR Corpus Shuffled vs Unshuffled Context Experiment
 
-This script replicates the logit lens technique from nostalgebraist's work on GPT-2
-(https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens)
-but adapted for Meta's Llama models using HuggingFace Transformers.
+This script investigates how Llama-3.1-8B-Instruct performs on factual recall 
+questions when the context is shuffled vs unshuffled. Based on the logit lens 
+technique from nostalgebraist's GPT-2 work.
 
-The logit lens technique:
-- At each layer, project the hidden state back to vocabulary space
-- This reveals what the model is "thinking" at intermediate layers
-- We can see how predictions evolve from input to output
+Research Questions:
+- How does shuffling context affect factual recall accuracy?
+- Which types of questions are still answerable after shuffling?
+- What do the logit lens top token predictions reveal about model reasoning?
 
-Key insight from the original work:
-- The model immediately converts inputs into tentative predictions
-- Later layers refine these predictions toward the final output
-- The model "thinks" in prediction space, not input space
+Dataset: c3po-ai/edgar-corpus (SEC 10-K filings)
+Questions tested:
+- Incorporation date (section_1)
+- Headquarters location (section_2) 
+- CEO name (section_10)
+- Company purpose summarization (section_1)
+- State of incorporation (section_1)
 
 Requirements:
-    pip install torch transformers accelerate matplotlib pandas numpy scipy tqdm colorcet
+    pip install torch transformers accelerate datasets matplotlib pandas numpy scipy tqdm colorcet
 
-For Llama-3.1-8B, you need:
-    1. HuggingFace account with access approved at https://huggingface.co/meta-llama/Llama-3.1-8B
+For Llama-3.1-8B-Instruct, you need:
+    1. HuggingFace account with access approved
     2. huggingface-cli login
-    3. GPU with ~16GB+ VRAM (or use Lambda Labs)
+    3. GPU with ~16GB+ VRAM (Lambda Labs recommended)
 
-Author: Adapted from nostalgebraist's GPT-2 logit lens notebook
+Reference: https://dualroute.baulab.info/
 """
 
 import os
+import re
+import json
+import random
 import numpy as np
 import torch
 import torch.nn.functional as F
 from collections import defaultdict
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from datasets import load_dataset
 from tqdm import tqdm
 import pandas as pd
 import matplotlib as mpl
@@ -51,7 +58,8 @@ except ImportError:
 # CONFIGURATION
 # =============================================================================
 
-MODEL_NAME = "meta-llama/Llama-3.1-8B"  # Requires HF approval (use on Lambda GPU)
+# Model selection - use Instruct version for Q&A
+MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"  # For Lambda GPU
 # MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"  # For local testing
 # MODEL_NAME = "microsoft/phi-2"
 
@@ -60,7 +68,11 @@ DEVICE = None  # Will be auto-detected
 DTYPE = None   # Will be auto-detected
 
 # Max tokens to process
-MAX_TOKENS = 200
+MAX_TOKENS = 512  # Increased for longer contexts
+
+# Experiment configuration
+NUM_SAMPLES = 50  # Number of contexts to test (Eric said ~50 is enough)
+RANDOM_SEED = 42  # For reproducibility
 
 
 # =============================================================================
@@ -664,68 +676,406 @@ cat_prompt = "How many letters does 'cat' have?"
 
 
 # =============================================================================
-# DATASET PLACEHOLDER
+# EDGAR CORPUS DATASET LOADING
 # =============================================================================
 
-# TODO: Replace with your actual dataset
-# The GPT-2 notebook uses example texts directly. 
-# When you have a dataset, you can load it here:
-#
-# def load_dataset(path):
-#     """Load your dataset for analysis."""
-#     # Example formats:
-#     # - JSON lines: [{"text": "..."}, ...]
-#     # - CSV: text column
-#     # - Plain text file: one example per line
-#     pass
-#
-# DATASET_PATH = "path/to/your/dataset.jsonl"
-# dataset = load_dataset(DATASET_PATH)
-#
-# Then iterate:
-# for example in dataset:
-#     tokens, results, layer_names = run_example(example["text"])
-#     # ... analyze ...
+def load_edgar_corpus(num_samples=NUM_SAMPLES, seed=RANDOM_SEED):
+    """
+    Load samples from the EDGAR corpus (SEC 10-K filings).
+    
+    Dataset: https://huggingface.co/datasets/c3po-ai/edgar-corpus
+    
+    Returns:
+        List of dicts with keys: section_1, section_2, section_10, filename, etc.
+    """
+    print(f"Loading EDGAR corpus ({num_samples} samples)...")
+    
+    # Load the dataset from HuggingFace
+    dataset = load_dataset("c3po-ai/edgar-corpus", "full", split="train", streaming=True)
+    
+    # Take a sample
+    random.seed(seed)
+    samples = []
+    
+    for i, item in enumerate(dataset):
+        if i >= num_samples * 3:  # Get extra samples in case some are incomplete
+            break
+        
+        # Check if sample has the sections we need
+        has_section_1 = item.get('section_1') and len(str(item.get('section_1', ''))) > 100
+        has_section_2 = item.get('section_2') and len(str(item.get('section_2', ''))) > 50
+        has_section_10 = item.get('section_10') and len(str(item.get('section_10', ''))) > 100
+        
+        if has_section_1:  # At minimum we need section_1
+            samples.append({
+                'section_1': str(item.get('section_1', '')),
+                'section_2': str(item.get('section_2', '')),
+                'section_10': str(item.get('section_10', '')),
+                'filename': item.get('filename', f'sample_{i}'),
+                'cik': item.get('cik', 'unknown'),
+            })
+        
+        if len(samples) >= num_samples:
+            break
+    
+    print(f"Loaded {len(samples)} valid samples")
+    return samples
 
-DATASET = None  # Placeholder - set this to your dataset
+
+# =============================================================================
+# CONTEXT SHUFFLING
+# =============================================================================
+
+def shuffle_sentences(text):
+    """
+    Shuffle the sentences in a text while preserving sentence structure.
+    This tests if the model relies on sequential context or can extract info regardless.
+    """
+    # Split into sentences (handle common abbreviations)
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    
+    # Filter out empty sentences
+    sentences = [s.strip() for s in sentences if s.strip()]
+    
+    # Shuffle
+    random.shuffle(sentences)
+    
+    return ' '.join(sentences)
+
+
+def shuffle_words(text):
+    """
+    Shuffle all words in the text (more aggressive shuffling).
+    """
+    words = text.split()
+    random.shuffle(words)
+    return ' '.join(words)
+
+
+# =============================================================================
+# QUESTION TEMPLATES
+# =============================================================================
+
+# Question templates for different sections and question types
+QUESTION_TEMPLATES = {
+    'state_of_incorporation': {
+        'section': 'section_1',
+        'question': "Based on the following context, what state was the company incorporated in? Answer with just the state name.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'State Inc.',
+    },
+    'incorporation_date': {
+        'section': 'section_1', 
+        'question': "Based on the following context, when was the company incorporated? Answer with just the date or year.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'Inc. Date',
+    },
+    'company_purpose': {
+        'section': 'section_1',
+        'question': "Based on the following context, what does the company do? Answer in one brief sentence.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'Purpose',
+    },
+    'headquarters': {
+        'section': 'section_2',
+        'question': "Based on the following context, where is the company's headquarters located? Answer with just the city and state.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'HQ',
+    },
+    'ceo_name': {
+        'section': 'section_10',
+        'question': "Based on the following context, who is the Chief Executive Officer (CEO)? Answer with just the name.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'CEO',
+    },
+}
+
+
+def truncate_context(text, max_chars=2000):
+    """Truncate context to avoid exceeding token limits."""
+    if len(text) > max_chars:
+        # Try to truncate at a sentence boundary
+        truncated = text[:max_chars]
+        last_period = truncated.rfind('.')
+        if last_period > max_chars // 2:
+            return truncated[:last_period + 1]
+        return truncated + "..."
+    return text
+
+
+def create_prompt(context, question_type):
+    """Create a prompt for the given context and question type."""
+    template = QUESTION_TEMPLATES[question_type]
+    truncated_context = truncate_context(context)
+    return template['question'].format(context=truncated_context)
+
+
+# =============================================================================
+# MODEL GENERATION WITH LOGIT LENS
+# =============================================================================
+
+def generate_with_logit_lens(prompt, max_new_tokens=50):
+    """
+    Generate a response and capture logit lens data.
+    
+    Returns:
+        response: Generated text
+        top_tokens_per_layer: List of (layer_idx, token, prob) for final token position
+        all_layer_predictions: Full logit lens data
+    """
+    model, tok = ensure_model_loaded()
+    
+    # Tokenize
+    inputs = tok(prompt, return_tensors="pt", truncation=True, max_length=MAX_TOKENS)
+    inputs = {k: v.to(model.device) for k, v in inputs.items()}
+    
+    # Generate response
+    with torch.no_grad():
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=max_new_tokens,
+            do_sample=False,  # Greedy decoding for consistency
+            pad_token_id=tok.eos_token_id,
+            return_dict_in_generate=True,
+            output_hidden_states=True,
+        )
+    
+    # Decode response (only the new tokens)
+    input_len = inputs['input_ids'].shape[1]
+    response = tok.decode(outputs.sequences[0][input_len:], skip_special_tokens=True).strip()
+    
+    # Now get logit lens data for the prompt (before generation)
+    with torch.no_grad():
+        prompt_outputs = model(
+            **inputs,
+            output_hidden_states=True,
+            return_dict=True
+        )
+    
+    # Get embedding matrix and layer norm
+    embed_matrix = get_embedding_matrix(model)
+    layer_norm = get_layer_norm(model)
+    
+    # Get top predictions at each layer for the LAST token position
+    hidden_states = prompt_outputs.hidden_states
+    last_pos = inputs['input_ids'].shape[1] - 1
+    
+    top_tokens_per_layer = []
+    
+    for layer_idx, h in enumerate(hidden_states):
+        # Get hidden state at last position
+        h_last = h[0, last_pos]  # (hidden_dim,)
+        
+        # Apply layer norm and project to vocab
+        h_normed = layer_norm(h_last)
+        logits = torch.matmul(h_normed, embed_matrix.T)
+        probs = F.softmax(logits, dim=-1)
+        
+        # Get top prediction
+        top_prob, top_idx = torch.max(probs, dim=-1)
+        top_token = tok.decode([top_idx.item()])
+        
+        top_tokens_per_layer.append((layer_idx, top_token, top_prob.item()))
+    
+    return response, top_tokens_per_layer, hidden_states
+
+
+# =============================================================================
+# EXPERIMENT RUNNER
+# =============================================================================
+
+def run_single_experiment(sample, question_type, shuffle_mode='none'):
+    """
+    Run a single experiment: ask a question about a context (optionally shuffled).
+    
+    Args:
+        sample: Dict with section_1, section_2, section_10
+        question_type: Key from QUESTION_TEMPLATES
+        shuffle_mode: 'none', 'sentences', or 'words'
+    
+    Returns:
+        Dict with results including response, top tokens, etc.
+    """
+    template = QUESTION_TEMPLATES[question_type]
+    section_name = template['section']
+    context = sample.get(section_name, '')
+    
+    if not context or len(context) < 50:
+        return None  # Skip if section is missing/too short
+    
+    # Apply shuffling if requested
+    if shuffle_mode == 'sentences':
+        context = shuffle_sentences(context)
+    elif shuffle_mode == 'words':
+        context = shuffle_words(context)
+    
+    # Create prompt
+    prompt = create_prompt(context, question_type)
+    
+    # Generate with logit lens
+    try:
+        response, top_tokens, _ = generate_with_logit_lens(prompt)
+    except Exception as e:
+        print(f"  Error: {e}")
+        return None
+    
+    return {
+        'question_type': question_type,
+        'shuffle_mode': shuffle_mode,
+        'response': response,
+        'top_tokens_per_layer': top_tokens,
+        'filename': sample.get('filename', 'unknown'),
+        'context_length': len(context),
+    }
+
+
+def run_full_experiment(samples, question_types=None, shuffle_modes=None):
+    """
+    Run the full shuffled vs unshuffled experiment.
+    
+    Args:
+        samples: List of EDGAR corpus samples
+        question_types: List of question types to test (None = all)
+        shuffle_modes: List of shuffle modes (None = ['none', 'sentences'])
+    """
+    if question_types is None:
+        question_types = list(QUESTION_TEMPLATES.keys())
+    if shuffle_modes is None:
+        shuffle_modes = ['none', 'sentences']
+    
+    results = []
+    
+    total_experiments = len(samples) * len(question_types) * len(shuffle_modes)
+    print(f"\nRunning {total_experiments} experiments...")
+    print(f"  Samples: {len(samples)}")
+    print(f"  Question types: {question_types}")
+    print(f"  Shuffle modes: {shuffle_modes}")
+    print()
+    
+    with tqdm(total=total_experiments, desc="Experiments") as pbar:
+        for sample in samples:
+            for q_type in question_types:
+                for shuffle_mode in shuffle_modes:
+                    result = run_single_experiment(sample, q_type, shuffle_mode)
+                    if result:
+                        results.append(result)
+                    pbar.update(1)
+    
+    return results
+
+
+# =============================================================================
+# RESULTS ANALYSIS AND PRETTY PRINTING
+# =============================================================================
+
+def print_experiment_results(results):
+    """Pretty print experiment results with top token predictions."""
+    
+    # ANSI colors
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+    END = '\033[0m'
+    
+    print("\n" + "=" * 80)
+    print(f"{BOLD}{CYAN}EDGAR CORPUS EXPERIMENT RESULTS{END}")
+    print("=" * 80)
+    
+    # Group results by question type and shuffle mode
+    grouped = defaultdict(lambda: defaultdict(list))
+    for r in results:
+        grouped[r['question_type']][r['shuffle_mode']].append(r)
+    
+    # Print summary for each question type
+    for q_type, shuffle_results in grouped.items():
+        template = QUESTION_TEMPLATES[q_type]
+        print(f"\n{BOLD}{'─' * 70}{END}")
+        print(f"{BOLD}{YELLOW}Question: {template['short_name']}{END}")
+        print(f"{DIM}Section: {template['section']}{END}")
+        
+        for shuffle_mode, mode_results in shuffle_results.items():
+            print(f"\n  {CYAN}Shuffle mode: {shuffle_mode}{END} ({len(mode_results)} samples)")
+            
+            # Show first 3 examples with their responses and top tokens
+            for i, r in enumerate(mode_results[:3]):
+                print(f"\n  {DIM}Example {i+1} ({r['filename']}){END}")
+                print(f"    {GREEN}Response:{END} {r['response'][:100]}{'...' if len(r['response']) > 100 else ''}")
+                
+                # Show top token evolution (selected layers)
+                top_tokens = r['top_tokens_per_layer']
+                num_layers = len(top_tokens)
+                
+                # Show embedding, early, middle, late, and final layers
+                layers_to_show = [0, num_layers//4, num_layers//2, 3*num_layers//4, num_layers-1]
+                layers_to_show = sorted(set(layers_to_show))  # Remove duplicates
+                
+                print(f"    {CYAN}Top tokens per layer:{END}")
+                for layer_idx in layers_to_show:
+                    if layer_idx < len(top_tokens):
+                        _, token, prob = top_tokens[layer_idx]
+                        layer_label = "embed" if layer_idx == 0 else f"L{layer_idx-1}"
+                        bar = "█" * int(prob * 10)
+                        prob_color = GREEN if prob > 0.5 else YELLOW if prob > 0.1 else DIM
+                        print(f"      {layer_label:>6}: {prob_color}{repr(token):<20} {prob:>6.1%} {bar}{END}")
+    
+    # Print overall statistics
+    print(f"\n{BOLD}{'=' * 80}{END}")
+    print(f"{BOLD}SUMMARY STATISTICS{END}")
+    print("=" * 80)
+    
+    print(f"\n{'Question Type':<20} {'Shuffle Mode':<15} {'Count':<8} {'Avg Response Len':<15}")
+    print("-" * 60)
+    
+    for q_type, shuffle_results in grouped.items():
+        for shuffle_mode, mode_results in shuffle_results.items():
+            avg_len = sum(len(r['response']) for r in mode_results) / max(len(mode_results), 1)
+            print(f"{QUESTION_TEMPLATES[q_type]['short_name']:<20} {shuffle_mode:<15} {len(mode_results):<8} {avg_len:<15.1f}")
+
+
+def save_results(results, filename="edgar_experiment_results.json"):
+    """Save results to JSON file."""
+    # Convert to serializable format
+    serializable = []
+    for r in results:
+        s = {k: v for k, v in r.items() if k != 'top_tokens_per_layer'}
+        s['top_tokens'] = [(l, t, p) for l, t, p in r['top_tokens_per_layer']]
+        serializable.append(s)
+    
+    with open(filename, 'w') as f:
+        json.dump(serializable, f, indent=2)
+    print(f"\nResults saved to {filename}")
+
+
+# Legacy placeholder for backwards compatibility
+DATASET = None
 
 
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
 
-if __name__ == "__main__":
+def run_demo_mode():
+    """Run the original logit lens demo on the cat prompt."""
     print("=" * 70)
-    print("THE LOGIT LENS ON LLAMA ACTIVATIONS")
+    print("LOGIT LENS DEMO MODE")
     print("=" * 70)
-    print(f"\nModel: {MODEL_NAME}")
-    print()
     
     # Load model
     ensure_model_loaded()
     
-    # =========================================================================
-    # PART 1: Print activation at layer 15 for "cat" prompt
-    # =========================================================================
+    # Print activation at layer 15
     print("\n" + "=" * 70)
-    print("PART 1: Activation at Layer 15")
+    print("Activation at Layer 15")
     print("=" * 70)
     
     activation, token_strs, token_ids = print_activation_stats(cat_prompt, target_layer=15)
     
-    # =========================================================================
-    # PART 2: Full logit lens analysis on the cat prompt
-    # =========================================================================
+    # Full logit lens analysis
     print("\n" + "=" * 70)
-    print("PART 2: Logit Lens Analysis")
+    print("Logit Lens Analysis")
     print("=" * 70)
     
     tokens, results, layer_names = run_example(cat_prompt)
     
     print(f"\nNumber of layers: {len(layer_names)}")
-    print(f"Layer names: {layer_names[:5]} ... {layer_names[-3:]}")
-    
-    # Show top predictions at each layer for the last token
     print(f"\nTop prediction at each layer (for last token '{token_string(tokens[-1])}'):")
     print(f"{'Layer':<10} {'Top Token':<20} {'Probability':>12}")
     print("-" * 45)
@@ -735,45 +1085,98 @@ if __name__ == "__main__":
         top_token_idx = results['argmaxes'][i][last_pos]
         top_prob = results['probs'][i][last_pos, top_token_idx]
         print(f"{layer_name:<10} {token_string(top_token_idx):<20} {top_prob:>12.4f}")
+
+
+def run_edgar_experiment(num_samples=NUM_SAMPLES, question_types=None, quick_test=False):
+    """
+    Run the EDGAR corpus shuffled vs unshuffled experiment.
     
-    # =========================================================================
-    # PART 3: Visualization (if running interactively)
-    # =========================================================================
-    print("\n" + "=" * 70)
-    print("PART 3: Generating Visualizations")
-    print("=" * 70)
+    Args:
+        num_samples: Number of samples to test
+        question_types: List of question types (None = all)
+        quick_test: If True, only test 5 samples with 2 question types
+    """
+    # ANSI colors for pretty output
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BOLD = '\033[1m'
+    END = '\033[0m'
     
-    try:
-        # Plot all visualizations
-        plot_all(results, layer_names, tokens, 
-                 start_token=0, end_token=len(tokens)-1, layer_step=2)
-        print("\nVisualizations generated successfully!")
-    except Exception as e:
-        print(f"\nVisualization error (may need display): {e}")
-        print("Run in Jupyter/Colab for interactive plots, or save to files.")
+    print("\n" + "=" * 80)
+    print(f"{BOLD}{CYAN}EDGAR CORPUS: SHUFFLED VS UNSHUFFLED CONTEXT EXPERIMENT{END}")
+    print("=" * 80)
+    print(f"\nModel: {BOLD}{MODEL_NAME}{END}")
+    print(f"Reference: {CYAN}https://dualroute.baulab.info/{END}")
+    print()
     
-    # =========================================================================
-    # PART 4: Example with dataset (placeholder)
-    # =========================================================================
-    if DATASET is not None:
-        print("\n" + "=" * 70)
-        print("PART 4: Dataset Analysis")
-        print("=" * 70)
-        
-        for i, example in enumerate(DATASET):
-            if i >= 3:  # Limit for demo
-                break
-            print(f"\nExample {i+1}:")
-            text = example if isinstance(example, str) else example.get("text", str(example))
-            tokens, results, layer_names = run_example(text[:500])  # Truncate long texts
-            print(f"  Tokens: {len(tokens)}")
-            print(f"  Final prediction: {token_string(results['argmaxes'][-1][-1])}")
+    # Quick test mode for debugging
+    if quick_test:
+        num_samples = 5
+        question_types = ['company_purpose', 'state_of_incorporation']
+        print(f"{YELLOW}Quick test mode: {num_samples} samples, {len(question_types)} question types{END}")
+    
+    # Load model
+    print(f"\n{BOLD}Step 1: Loading model...{END}")
+    ensure_model_loaded()
+    
+    # Load EDGAR corpus
+    print(f"\n{BOLD}Step 2: Loading EDGAR corpus...{END}")
+    samples = load_edgar_corpus(num_samples=num_samples)
+    
+    if len(samples) == 0:
+        print(f"{YELLOW}Warning: No samples loaded. Check your HuggingFace authentication.{END}")
+        return
+    
+    # Run experiment
+    print(f"\n{BOLD}Step 3: Running experiments...{END}")
+    results = run_full_experiment(
+        samples, 
+        question_types=question_types,
+        shuffle_modes=['none', 'sentences']
+    )
+    
+    # Print results
+    print(f"\n{BOLD}Step 4: Analyzing results...{END}")
+    print_experiment_results(results)
+    
+    # Save results
+    print(f"\n{BOLD}Step 5: Saving results...{END}")
+    save_results(results)
+    
+    print("\n" + "=" * 80)
+    print(f"{BOLD}{GREEN}EXPERIMENT COMPLETE{END}")
+    print("=" * 80)
+    print(f"\nNext steps:")
+    print(f"  1. Review the results JSON file for detailed analysis")
+    print(f"  2. Identify questions with >50% accuracy on unshuffled context")
+    print(f"  3. Compare accuracy between shuffled and unshuffled")
+    print(f"  4. Analyze top token predictions to understand model reasoning")
+    print()
+    
+    return results
+
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="EDGAR Corpus Shuffled vs Unshuffled Experiment")
+    parser.add_argument('--demo', action='store_true', help='Run demo mode with cat prompt')
+    parser.add_argument('--quick', action='store_true', help='Quick test with 5 samples')
+    parser.add_argument('--samples', type=int, default=NUM_SAMPLES, help=f'Number of samples (default: {NUM_SAMPLES})')
+    parser.add_argument('--questions', nargs='+', choices=list(QUESTION_TEMPLATES.keys()),
+                        help='Question types to test')
+    
+    args = parser.parse_args()
+    
+    if args.demo:
+        run_demo_mode()
     else:
-        print("\n" + "=" * 70)
-        print("PART 4: Dataset Analysis (PLACEHOLDER)")
-        print("=" * 70)
-        print("\nNo dataset loaded. Set DATASET variable to analyze your data.")
-        print("See the DATASET PLACEHOLDER section in the code for instructions.")
+        run_edgar_experiment(
+            num_samples=args.samples,
+            question_types=args.questions,
+            quick_test=args.quick
+        )
     
     print("\n" + "=" * 70)
     print("DONE")
