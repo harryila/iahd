@@ -691,7 +691,7 @@ def load_edgar_corpus(num_samples=NUM_SAMPLES, seed=RANDOM_SEED):
     print(f"Loading EDGAR corpus ({num_samples} samples)...")
     
     # Load the dataset from HuggingFace
-    dataset = load_dataset("c3po-ai/edgar-corpus", "full", split="train", streaming=True)
+    dataset = load_dataset("c3po-ai/edgar-corpus", "full", split="train", streaming=True, trust_remote_code=True)
     
     # Take a sample
     random.seed(seed)
@@ -753,37 +753,239 @@ def shuffle_words(text):
 
 
 # =============================================================================
+# GROUND TRUTH EXTRACTION
+# =============================================================================
+
+# US States for matching
+US_STATES = [
+    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
+    'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
+    'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+    'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+    'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
+    'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
+    'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
+    'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
+    'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
+    'West Virginia', 'Wisconsin', 'Wyoming'
+]
+
+def extract_state_of_incorporation(text):
+    """
+    Extract state of incorporation from SEC filing text.
+    Looks for patterns like "incorporated in Delaware", "a California corporation", etc.
+    """
+    text_lower = text.lower()
+    
+    # Common patterns for state of incorporation
+    patterns = [
+        r'incorporated (?:in|under the laws of) (?:the state of )?(\w+(?:\s+\w+)?)',
+        r'a (\w+(?:\s+\w+)?) corporation',
+        r'organized (?:in|under the laws of) (?:the state of )?(\w+(?:\s+\w+)?)',
+        r'(?:the |a )(\w+(?:\s+\w+)?) company',
+        r'state of incorporation[:\s]+(\w+(?:\s+\w+)?)',
+    ]
+    
+    for pattern in patterns:
+        matches = re.findall(pattern, text_lower)
+        for match in matches:
+            # Check if it's a valid US state
+            for state in US_STATES:
+                if state.lower() == match.lower() or state.lower() in match.lower():
+                    return state
+    
+    return None
+
+
+def extract_incorporation_year(text):
+    """
+    Extract incorporation year from SEC filing text.
+    Looks for patterns like "incorporated in 1993", "founded in 1985", etc.
+    """
+    # Common patterns
+    patterns = [
+        r'incorporated (?:in |on |)(?:\w+ )?(\d{4})',
+        r'organized (?:in |on |)(?:\w+ )?(\d{4})',
+        r'founded (?:in |on |)(?:\w+ )?(\d{4})',
+        r'established (?:in |on |)(?:\w+ )?(\d{4})',
+        r'formed (?:in |on |)(?:\w+ )?(\d{4})',
+        r'since (\d{4})',
+    ]
+    
+    for pattern in patterns:
+        matches = re.findall(pattern, text.lower())
+        for match in matches:
+            year = int(match)
+            # Reasonable year range for companies
+            if 1800 <= year <= 2000:
+                return str(year)
+    
+    return None
+
+
+def extract_headquarters_state(text):
+    """
+    Extract headquarters state from SEC filing section 2 (Properties).
+    Looks for patterns like "headquarters in California", "principal offices located in..."
+    """
+    text_lower = text.lower()
+    
+    # Common patterns for headquarters
+    patterns = [
+        r'(?:headquarters|principal (?:executive )?offices?|corporate offices?) (?:is |are |)(?:located |)in ([^,\.\n]+)',
+        r'(?:located|headquartered) in ([^,\.\n]+)',
+    ]
+    
+    for pattern in patterns:
+        matches = re.findall(pattern, text_lower)
+        for match in matches:
+            # Check if it contains a valid US state
+            for state in US_STATES:
+                if state.lower() in match.lower():
+                    return state
+    
+    return None
+
+
+def extract_ceo_name(text):
+    """
+    Extract CEO name from SEC filing section 10 (Directors and Officers).
+    Looks for patterns like "John Smith, Chief Executive Officer"
+    """
+    # Common patterns for CEO
+    patterns = [
+        r'([A-Z][a-z]+ [A-Z][a-z]+)[,\s]+(?:is |serves as |)(?:the |our |)(?:Chief Executive Officer|CEO|President and CEO)',
+        r'(?:Chief Executive Officer|CEO|President and CEO)[:\s]+([A-Z][a-z]+ [A-Z][a-z]+)',
+        r'([A-Z][a-z]+ [A-Z]\. [A-Z][a-z]+)[,\s]+(?:Chief Executive Officer|CEO)',
+    ]
+    
+    for pattern in patterns:
+        matches = re.findall(pattern, text)
+        if matches:
+            full_name = matches[0]
+            # Return last name
+            parts = full_name.replace('.', '').split()
+            if parts:
+                return parts[-1]  # Last name
+    
+    return None
+
+
+def extract_ground_truth(sample, question_type):
+    """
+    Extract ground truth answer from the EDGAR sample for a given question type.
+    
+    Returns:
+        str or None: The ground truth answer, or None if not found
+    """
+    template = QUESTION_TEMPLATES[question_type]
+    section = template['section']
+    text = sample.get(section, '')
+    
+    if not text:
+        return None
+    
+    if question_type == 'state_of_incorporation':
+        return extract_state_of_incorporation(text)
+    elif question_type == 'incorporation_year':
+        return extract_incorporation_year(text)
+    elif question_type == 'headquarters_state':
+        return extract_headquarters_state(text)
+    elif question_type == 'ceo_lastname':
+        return extract_ceo_name(text)
+    elif question_type == 'company_product':
+        # Product is too subjective for ground truth extraction
+        # We'll skip ground truth for this one
+        return None
+    
+    return None
+
+
+def normalize_answer(answer):
+    """Normalize an answer for comparison (lowercase, strip, handle common variations)."""
+    if answer is None:
+        return None
+    answer = str(answer).lower().strip()
+    # Remove common suffixes/prefixes
+    answer = answer.rstrip('.,;:!?()')
+    return answer
+
+
+def answers_match(model_answer, ground_truth):
+    """Check if model answer matches ground truth (with fuzzy matching)."""
+    if ground_truth is None or model_answer is None:
+        return None  # Can't determine
+    
+    model_norm = normalize_answer(model_answer)
+    truth_norm = normalize_answer(ground_truth)
+    
+    if model_norm == truth_norm:
+        return True
+    
+    # Check if one contains the other (for partial matches)
+    if model_norm in truth_norm or truth_norm in model_norm:
+        return True
+    
+    # Handle "New York" vs "New" edge case
+    if truth_norm.startswith(model_norm) or model_norm.startswith(truth_norm):
+        return True
+    
+    return False
+
+
+# =============================================================================
 # QUESTION TEMPLATES
 # =============================================================================
 
 # Question templates for different sections and question types
+# Prompts are designed to elicit ONE-WORD or very short answers
 QUESTION_TEMPLATES = {
     'state_of_incorporation': {
         'section': 'section_1',
-        'question': "Based on the following context, what state was the company incorporated in? Answer with just the state name.\n\nContext: {context}\n\nAnswer:",
+        'question': "Context: {context}\n\nQuestion: What state was this company incorporated in?\nAnswer (one word only):",
         'short_name': 'State Inc.',
+        'expected_format': 'state_name',  # e.g., "Delaware", "California"
     },
-    'incorporation_date': {
+    'incorporation_year': {
         'section': 'section_1', 
-        'question': "Based on the following context, when was the company incorporated? Answer with just the date or year.\n\nContext: {context}\n\nAnswer:",
-        'short_name': 'Inc. Date',
+        'question': "Context: {context}\n\nQuestion: What year was this company incorporated?\nAnswer (year only):",
+        'short_name': 'Inc. Year',
+        'expected_format': 'year',  # e.g., "1993", "1985"
     },
-    'company_purpose': {
+    'company_product': {
         'section': 'section_1',
-        'question': "Based on the following context, what does the company do? Answer in one brief sentence.\n\nContext: {context}\n\nAnswer:",
-        'short_name': 'Purpose',
+        'question': "Context: {context}\n\nQuestion: What is the main product or service this company provides?\nAnswer (one or two words only):",
+        'short_name': 'Product',
+        'expected_format': 'product',  # e.g., "water", "electronics", "insurance"
     },
-    'headquarters': {
+    'headquarters_state': {
         'section': 'section_2',
-        'question': "Based on the following context, where is the company's headquarters located? Answer with just the city and state.\n\nContext: {context}\n\nAnswer:",
-        'short_name': 'HQ',
+        'question': "Context: {context}\n\nQuestion: What state is the company's headquarters located in?\nAnswer (one word only):",
+        'short_name': 'HQ State',
+        'expected_format': 'state_name',
     },
-    'ceo_name': {
+    'ceo_lastname': {
         'section': 'section_10',
-        'question': "Based on the following context, who is the Chief Executive Officer (CEO)? Answer with just the name.\n\nContext: {context}\n\nAnswer:",
-        'short_name': 'CEO',
+        'question': "Context: {context}\n\nQuestion: What is the last name of the CEO?\nAnswer (one word only):",
+        'short_name': 'CEO Name',
+        'expected_format': 'lastname',
     },
 }
+
+
+def extract_first_word(response):
+    """Extract just the first word from a response for comparison."""
+    # Clean up the response
+    response = response.strip()
+    # Remove common prefixes
+    for prefix in ["The ", "A ", "An "]:
+        if response.startswith(prefix):
+            response = response[len(prefix):]
+    # Get first word (handle punctuation)
+    first_word = response.split()[0] if response.split() else ""
+    # Remove trailing punctuation
+    first_word = first_word.rstrip('.,;:!?()')
+    return first_word
 
 
 def truncate_context(text, max_chars=2000):
@@ -809,7 +1011,7 @@ def create_prompt(context, question_type):
 # MODEL GENERATION WITH LOGIT LENS
 # =============================================================================
 
-def generate_with_logit_lens(prompt, max_new_tokens=50):
+def generate_with_logit_lens(prompt, max_new_tokens=20):
     """
     Generate a response and capture logit lens data.
     
@@ -889,7 +1091,7 @@ def run_single_experiment(sample, question_type, shuffle_mode='none'):
         shuffle_mode: 'none', 'sentences', or 'words'
     
     Returns:
-        Dict with results including response, top tokens, etc.
+        Dict with results including response, top tokens, ground truth, etc.
     """
     template = QUESTION_TEMPLATES[question_type]
     section_name = template['section']
@@ -897,6 +1099,9 @@ def run_single_experiment(sample, question_type, shuffle_mode='none'):
     
     if not context or len(context) < 50:
         return None  # Skip if section is missing/too short
+    
+    # Extract ground truth BEFORE shuffling (from original text)
+    ground_truth = extract_ground_truth(sample, question_type)
     
     # Apply shuffling if requested
     if shuffle_mode == 'sentences':
@@ -914,10 +1119,19 @@ def run_single_experiment(sample, question_type, shuffle_mode='none'):
         print(f"  Error: {e}")
         return None
     
+    # Extract the first word for easier analysis
+    first_word = extract_first_word(response)
+    
+    # Check if model answer matches ground truth
+    is_correct = answers_match(first_word, ground_truth)
+    
     return {
         'question_type': question_type,
         'shuffle_mode': shuffle_mode,
         'response': response,
+        'first_word': first_word,  # The key answer token
+        'ground_truth': ground_truth,  # Extracted from original text
+        'is_correct': is_correct,  # True/False/None
         'top_tokens_per_layer': top_tokens,
         'filename': sample.get('filename', 'unknown'),
         'context_length': len(context),
@@ -936,7 +1150,7 @@ def run_full_experiment(samples, question_types=None, shuffle_modes=None):
     if question_types is None:
         question_types = list(QUESTION_TEMPLATES.keys())
     if shuffle_modes is None:
-        shuffle_modes = ['none', 'sentences']
+        shuffle_modes = ['none', 'words']  # Default: 'words' = fully shuffled at global level
     
     results = []
     
@@ -997,7 +1211,19 @@ def print_experiment_results(results):
             # Show first 3 examples with their responses and top tokens
             for i, r in enumerate(mode_results[:3]):
                 print(f"\n  {DIM}Example {i+1} ({r['filename']}){END}")
-                print(f"    {GREEN}Response:{END} {r['response'][:100]}{'...' if len(r['response']) > 100 else ''}")
+                first_word = r.get('first_word', r['response'].split()[0] if r['response'].split() else '?')
+                ground_truth = r.get('ground_truth', None)
+                is_correct = r.get('is_correct', None)
+                
+                # Show answer with correctness indicator
+                if is_correct is True:
+                    print(f"    {GREEN}Answer:{END} {BOLD}{first_word}{END} {GREEN}✓ CORRECT{END}")
+                elif is_correct is False:
+                    print(f"    {GREEN}Answer:{END} {BOLD}{first_word}{END} {RED}✗ WRONG (truth: {ground_truth}){END}")
+                else:
+                    print(f"    {GREEN}Answer:{END} {BOLD}{first_word}{END} {DIM}(no ground truth){END}")
+                
+                print(f"    {DIM}Full: {r['response'][:60]}{'...' if len(r['response']) > 60 else ''}{END}")
                 
                 # Show top token evolution (selected layers)
                 top_tokens = r['top_tokens_per_layer']
@@ -1021,13 +1247,107 @@ def print_experiment_results(results):
     print(f"{BOLD}SUMMARY STATISTICS{END}")
     print("=" * 80)
     
-    print(f"\n{'Question Type':<20} {'Shuffle Mode':<15} {'Count':<8} {'Avg Response Len':<15}")
-    print("-" * 60)
+    # ACCURACY TABLE
+    print(f"\n{BOLD}{'Question Type':<15} {'Shuffle':<12} {'Count':<7} {'Correct':<10} {'Accuracy':<12} {'Has GT':<8}{END}")
+    print("-" * 70)
     
     for q_type, shuffle_results in grouped.items():
         for shuffle_mode, mode_results in shuffle_results.items():
-            avg_len = sum(len(r['response']) for r in mode_results) / max(len(mode_results), 1)
-            print(f"{QUESTION_TEMPLATES[q_type]['short_name']:<20} {shuffle_mode:<15} {len(mode_results):<8} {avg_len:<15.1f}")
+            # Count results with ground truth
+            with_gt = [r for r in mode_results if r.get('ground_truth') is not None]
+            correct = sum(1 for r in mode_results if r.get('is_correct') is True)
+            total_with_gt = len(with_gt)
+            
+            # Calculate accuracy
+            if total_with_gt > 0:
+                accuracy = correct / total_with_gt * 100
+                acc_color = GREEN if accuracy >= 70 else YELLOW if accuracy >= 40 else RED
+                acc_str = f"{acc_color}{accuracy:.0f}%{END}"
+            else:
+                acc_str = f"{DIM}N/A{END}"
+            
+            print(f"{QUESTION_TEMPLATES[q_type]['short_name']:<15} {shuffle_mode:<12} {len(mode_results):<7} "
+                  f"{correct:<10} {acc_str:<20} {total_with_gt:<8}")
+    
+    # ACCURACY COMPARISON: Shuffled vs Unshuffled
+    print(f"\n{BOLD}{'=' * 80}{END}")
+    print(f"{BOLD}ACCURACY COMPARISON: ORIGINAL VS FULLY SHUFFLED (word-level){END}")
+    print("=" * 80)
+    print(f"\n{DIM}Does full word-level shuffling hurt accuracy? (comparing to ground truth){END}\n")
+    
+    print(f"  {'Question':<15} {'Unshuffled':<15} {'Shuffled':<15} {'Difference':<15}")
+    print(f"  {'-' * 55}")
+    
+    for q_type, shuffle_results in grouped.items():
+        # Support both 'sentences' and 'words' shuffle modes
+        shuffle_key = 'words' if 'words' in shuffle_results else 'sentences'
+        if 'none' not in shuffle_results or shuffle_key not in shuffle_results:
+            continue
+        
+        # Calculate accuracy for unshuffled
+        none_results = shuffle_results['none']
+        none_with_gt = [r for r in none_results if r.get('ground_truth') is not None]
+        none_correct = sum(1 for r in none_results if r.get('is_correct') is True)
+        none_acc = (none_correct / len(none_with_gt) * 100) if none_with_gt else None
+        
+        # Calculate accuracy for shuffled
+        sent_results = shuffle_results[shuffle_key]
+        sent_with_gt = [r for r in sent_results if r.get('ground_truth') is not None]
+        sent_correct = sum(1 for r in sent_results if r.get('is_correct') is True)
+        sent_acc = (sent_correct / len(sent_with_gt) * 100) if sent_with_gt else None
+        
+        # Show comparison
+        q_name = QUESTION_TEMPLATES[q_type]['short_name']
+        
+        if none_acc is not None and sent_acc is not None:
+            diff = sent_acc - none_acc
+            diff_color = GREEN if diff >= 0 else RED
+            diff_str = f"{diff_color}{diff:+.0f}%{END}"
+            none_str = f"{none_acc:.0f}%"
+            sent_str = f"{sent_acc:.0f}%"
+        else:
+            diff_str = f"{DIM}N/A{END}"
+            none_str = f"{DIM}N/A{END}" if none_acc is None else f"{none_acc:.0f}%"
+            sent_str = f"{DIM}N/A{END}" if sent_acc is None else f"{sent_acc:.0f}%"
+        
+        print(f"  {q_name:<15} {none_str:<15} {sent_str:<15} {diff_str:<15}")
+    
+    # CONSISTENCY ANALYSIS
+    print(f"\n{BOLD}ANSWER CONSISTENCY (same answer regardless of shuffling){END}")
+    print(f"  {'-' * 55}")
+    
+    for q_type, shuffle_results in grouped.items():
+        # Support both 'sentences' and 'words' shuffle modes
+        shuffle_key = 'words' if 'words' in shuffle_results else 'sentences'
+        if 'none' not in shuffle_results or shuffle_key not in shuffle_results:
+            continue
+        
+        none_results = {r['filename']: r for r in shuffle_results['none']}
+        sent_results = {r['filename']: r for r in shuffle_results[shuffle_key]}
+        
+        matches = 0
+        total = 0
+        mismatches = []
+        
+        for filename in none_results:
+            if filename in sent_results:
+                none_word = none_results[filename].get('first_word', '').lower()
+                sent_word = sent_results[filename].get('first_word', '').lower()
+                total += 1
+                if none_word == sent_word:
+                    matches += 1
+                else:
+                    mismatches.append((filename, none_word, sent_word))
+        
+        if total > 0:
+            pct = matches / total * 100
+            color = GREEN if pct >= 80 else YELLOW if pct >= 50 else RED
+            print(f"  {QUESTION_TEMPLATES[q_type]['short_name']:<15}: {color}{matches}/{total} ({pct:.0f}%) same answer{END}")
+            
+            # Show up to 3 mismatches
+            if mismatches[:3]:
+                for fn, none_w, sent_w in mismatches[:3]:
+                    print(f"    {DIM}• {fn}: '{none_w}' → '{sent_w}'{END}")
 
 
 def save_results(results, filename="edgar_experiment_results.json"):
@@ -1036,7 +1356,13 @@ def save_results(results, filename="edgar_experiment_results.json"):
     serializable = []
     for r in results:
         s = {k: v for k, v in r.items() if k != 'top_tokens_per_layer'}
-        s['top_tokens'] = [(l, t, p) for l, t, p in r['top_tokens_per_layer']]
+        s['top_tokens'] = [(l, t, p) for l, t, p in r.get('top_tokens_per_layer', [])]
+        # Ensure first_word is included
+        if 'first_word' not in s:
+            s['first_word'] = extract_first_word(r.get('response', ''))
+        # Ensure ground truth fields are included
+        s['ground_truth'] = r.get('ground_truth', None)
+        s['is_correct'] = r.get('is_correct', None)
         serializable.append(s)
     
     with open(filename, 'w') as f:
@@ -1087,7 +1413,7 @@ def run_demo_mode():
         print(f"{layer_name:<10} {token_string(top_token_idx):<20} {top_prob:>12.4f}")
 
 
-def run_edgar_experiment(num_samples=NUM_SAMPLES, question_types=None, quick_test=False):
+def run_edgar_experiment(num_samples=NUM_SAMPLES, question_types=None, quick_test=False, shuffle_mode='words'):
     """
     Run the EDGAR corpus shuffled vs unshuffled experiment.
     
@@ -1095,6 +1421,7 @@ def run_edgar_experiment(num_samples=NUM_SAMPLES, question_types=None, quick_tes
         num_samples: Number of samples to test
         question_types: List of question types (None = all)
         quick_test: If True, only test 5 samples with 2 question types
+        shuffle_mode: 'sentences' (reorder sentences) or 'words' (fully shuffle all words)
     """
     # ANSI colors for pretty output
     CYAN = '\033[96m'
@@ -1107,14 +1434,16 @@ def run_edgar_experiment(num_samples=NUM_SAMPLES, question_types=None, quick_tes
     print(f"{BOLD}{CYAN}EDGAR CORPUS: SHUFFLED VS UNSHUFFLED CONTEXT EXPERIMENT{END}")
     print("=" * 80)
     print(f"\nModel: {BOLD}{MODEL_NAME}{END}")
+    print(f"Shuffle mode: {BOLD}{shuffle_mode.upper()}{END} ({'fully shuffled words' if shuffle_mode == 'words' else 'reordered sentences'})")
     print(f"Reference: {CYAN}https://dualroute.baulab.info/{END}")
     print()
     
     # Quick test mode for debugging
     if quick_test:
         num_samples = 5
-        question_types = ['company_purpose', 'state_of_incorporation']
+        question_types = ['company_product', 'state_of_incorporation']
         print(f"{YELLOW}Quick test mode: {num_samples} samples, {len(question_types)} question types{END}")
+        print(f"{YELLOW}Shuffle mode: WORDS (fully shuffled at global level){END}")
     
     # Load model
     print(f"\n{BOLD}Step 1: Loading model...{END}")
@@ -1133,7 +1462,7 @@ def run_edgar_experiment(num_samples=NUM_SAMPLES, question_types=None, quick_tes
     results = run_full_experiment(
         samples, 
         question_types=question_types,
-        shuffle_modes=['none', 'sentences']
+        shuffle_modes=['none', shuffle_mode]  # Use the specified shuffle mode
     )
     
     # Print results
@@ -1166,6 +1495,8 @@ if __name__ == "__main__":
     parser.add_argument('--samples', type=int, default=NUM_SAMPLES, help=f'Number of samples (default: {NUM_SAMPLES})')
     parser.add_argument('--questions', nargs='+', choices=list(QUESTION_TEMPLATES.keys()),
                         help='Question types to test')
+    parser.add_argument('--shuffle', type=str, default='words', choices=['sentences', 'words'],
+                        help='Shuffle mode: "sentences" (reorder sentences) or "words" (fully shuffle all words, default)')
     
     args = parser.parse_args()
     
@@ -1175,7 +1506,8 @@ if __name__ == "__main__":
         run_edgar_experiment(
             num_samples=args.samples,
             question_types=args.questions,
-            quick_test=args.quick
+            quick_test=args.quick,
+            shuffle_mode=args.shuffle
         )
     
     print("\n" + "=" * 70)
