@@ -68,7 +68,7 @@ DEVICE = None  # Will be auto-detected
 DTYPE = None   # Will be auto-detected
 
 # Max tokens to process
-MAX_TOKENS = 512  # Increased for longer contexts
+MAX_TOKENS = 2000   #512  # Increased for longer contexts
 
 # Experiment configuration
 NUM_SAMPLES = 50  # Number of contexts to test (Eric said ~50 is enough)
