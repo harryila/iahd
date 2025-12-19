@@ -1,13 +1,13 @@
 # Core ML frameworks
-torch>=2.0.0
-transformers>=4.40.0
-accelerate>=0.20.0
+torch>=2.7.0
+transformers>=4.57.0
+accelerate>=1.12.0
 
 # For GPT-2 logit lens (TensorFlow 1.x - use on Lambda/GPU only)
 # tensorflow==1.15  # Uncomment for GPT-2 notebook
 
-# Image processing (IMPORTANT: need recent version for transformers compatibility)
-Pillow>=9.0.0
+# Image processing (IMPORTANT: need >=9.1.0 for PIL.Image.Resampling required by transformers)
+Pillow>=9.1.0
 
 # Visualization
 matplotlib>=3.5.0

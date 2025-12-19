@@ -120,8 +120,10 @@ def load_edgar_samples(num_samples=50):
         # Get ground truth if available
         gt_state = None
         if filename in ground_truth:
-            gt_state = ground_truth[filename].get('state_of_incorporation', None)
-            if pd.isna(gt_state) if 'pd' in dir() else gt_state is None:
+            gt_state = ground_truth[filename].get('incorporation_state', None)
+            # Handle pandas NaN values
+            import pandas as pd
+            if pd.isna(gt_state) if hasattr(gt_state, '__class__') else gt_state is None:
                 gt_state = None
         
         samples.append({
