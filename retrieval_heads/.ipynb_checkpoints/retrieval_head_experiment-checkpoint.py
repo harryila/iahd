@@ -79,21 +79,13 @@ NUM_SAMPLES = 50
 # =============================================================================
 
 def load_ground_truth():
-    """Load ground truth from the verified CSV."""
+    """Load ground truth from CSV if available."""
     gt_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
-                           "edgar_gt_verified_slim.csv")
+                           "gt_extract", "edgar_ground_truth_llm.csv")
     if os.path.exists(gt_path):
         import pandas as pd
         df = pd.read_csv(gt_path)
-        gt_dict = {}
-        for _, row in df.iterrows():
-            filename = row['filename']
-            state = row.get('original_Inc_state_truth', None)
-            if pd.notna(state) and state and str(state).upper() not in ['NULL', 'NAN', 'NONE', '']:
-                gt_dict[filename] = {'incorporation_state': str(state).strip()}
-        print(f"Loaded ground truth for {len(gt_dict)} files from edgar_gt_verified_slim.csv")
-        return gt_dict
-    print(f"Warning: Ground truth file not found at {gt_path}")
+        return {row['filename']: row for _, row in df.iterrows()}
     return {}
 
 # =============================================================================

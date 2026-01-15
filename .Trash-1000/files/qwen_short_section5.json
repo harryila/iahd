@@ -1,0 +1,390 @@
+{
+  "model": "qwen",
+  "model_name": "Qwen/Qwen2.5-7B-Instruct",
+  "context": "short",
+  "num_samples": 50,
+  "top_retrieval_heads": [
+    [
+      "L19H22",
+      0.87899658203125
+    ],
+    [
+      "L19H6",
+      0.78271484375
+    ],
+    [
+      "L19H17",
+      0.77001708984375
+    ],
+    [
+      "L19H24",
+      0.68754638671875
+    ],
+    [
+      "L21H5",
+      0.65464111328125
+    ],
+    [
+      "L0H18",
+      0.61435546875
+    ],
+    [
+      "L1H14",
+      0.600732421875
+    ],
+    [
+      "L0H22",
+      0.566875
+    ],
+    [
+      "L3H8",
+      0.5390673828125
+    ],
+    [
+      "L24H21",
+      0.532119140625
+    ],
+    [
+      "L19H18",
+      0.524288330078125
+    ],
+    [
+      "L19H16",
+      0.5215130615234375
+    ],
+    [
+      "L0H10",
+      0.486142578125
+    ],
+    [
+      "L19H15",
+      0.4788202953338623
+    ],
+    [
+      "L23H11",
+      0.4762100315093994
+    ],
+    [
+      "L2H21",
+      0.4720556640625
+    ],
+    [
+      "L22H13",
+      0.46452423095703127
+    ],
+    [
+      "L2H1",
+      0.4555126953125
+    ],
+    [
+      "L19H25",
+      0.451376953125
+    ],
+    [
+      "L1H6",
+      0.4423828125
+    ]
+  ],
+  "results": [
+    {
+      "filename": "92116_1993.txt",
+      "raw_answer": "![](https://d2vlcm",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "103730_1993.txt",
+      "raw_answer": "![](https://d28h",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "100240_1993.txt",
+      "raw_answer": "![](https://d28h",
+      "normalized_answer": null,
+      "context_tokens": 133
+    },
+    {
+      "filename": "58696_1993.txt",
+      "raw_answer": "![](https://d28h",
+      "normalized_answer": null,
+      "context_tokens": 77
+    },
+    {
+      "filename": "46207_1993.txt",
+      "raw_answer": "![](https://d2vlcm",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "60041_1993.txt",
+      "raw_answer": "!3116\n\nUNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 145
+    },
+    {
+      "filename": "55387_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe! provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 186
+    },
+    {
+      "filename": "40878_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe! provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 40
+    },
+    {
+      "filename": "53540_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe question!",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 114
+    },
+    {
+      "filename": "800287_1993.txt",
+      "raw_answer": "![](https://d2vlcm",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "725625_1993.txt",
+      "raw_answer": "![](https://d28h",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "66479_1993.txt",
+      "raw_answer": "![](https://d28h",
+      "normalized_answer": null,
+      "context_tokens": 82
+    },
+    {
+      "filename": "700674_1993.txt",
+      "raw_answer": "![](https://d28rz",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "854094_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nAnswer!UNKNOWN!",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 58
+    },
+    {
+      "filename": "846972_1993.txt",
+      "raw_answer": "!UNKNOWN! UNKNOWN\n\nGiven!the",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "59478_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe!UNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 90
+    },
+    {
+      "filename": "5550_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation: The! provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "22767_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe!UNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 181
+    },
+    {
+      "filename": "738339_1993.txt",
+      "raw_answer": "![](https://d2bq",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "29854_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation: The!UNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 86
+    },
+    {
+      "filename": "97210_1993.txt",
+      "raw_answer": "![](https://d28h",
+      "normalized_answer": null,
+      "context_tokens": 155
+    },
+    {
+      "filename": "7383_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nAnswer!UNKNOWN!",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 64
+    },
+    {
+      "filename": "80661_1993.txt",
+      "raw_answer": "4!84!9",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "711404_1993.txt",
+      "raw_answer": "!UNKNOWN!",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "75042_1993.txt",
+      "raw_answer": "!UNKNOWN! UNKNOWN\n\nGiven!UNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "18497_1993.txt",
+      "raw_answer": "!UNKNOWN! UNKNOWN\n\nThe!!",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "33565_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe! provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 73
+    },
+    {
+      "filename": "745287_1993.txt",
+      "raw_answer": "![](https://d2vlcm",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "93469_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation: The!UNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 66
+    },
+    {
+      "filename": "354869_1993.txt",
+      "raw_answer": "!S!UNKNOWN!S!\n\nUNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 98
+    },
+    {
+      "filename": "36966_1993.txt",
+      "raw_answer": "![](https://d2vlcm",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "799036_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation!The!provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "25890_1993.txt",
+      "raw_answer": "![](https://d2b3",
+      "normalized_answer": null,
+      "context_tokens": 120
+    },
+    {
+      "filename": "764764_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe! provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 60
+    },
+    {
+      "filename": "717605_1993.txt",
+      "raw_answer": "![](https://d2vlcm",
+      "normalized_answer": null,
+      "context_tokens": 175
+    },
+    {
+      "filename": "92487_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe! provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 47
+    },
+    {
+      "filename": "79166_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation: The number!",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "355883_1993.txt",
+      "raw_answer": "![](https://www.sec.gov!",
+      "normalized_answer": null,
+      "context_tokens": 78
+    },
+    {
+      "filename": "865227_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe! provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 98
+    },
+    {
+      "filename": "101320_1993.txt",
+      "raw_answer": "![](https://d2vlcm",
+      "normalized_answer": null,
+      "context_tokens": 158
+    },
+    {
+      "filename": "64605_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe! question",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "884033_1993.txt",
+      "raw_answer": "![](https://d28h",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "17797_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe!provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "216228_1993.txt",
+      "raw_answer": "![](https://d2b0",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "791445_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation:\nThe! question",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 87
+    },
+    {
+      "filename": "719264_1993.txt",
+      "raw_answer": "617\n\nGiven!UNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "92050_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nThe! provided!!",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "788043_1993.txt",
+      "raw_answer": "![](https://d2vlcm",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "29989_1993.txt",
+      "raw_answer": "!UNKNOWN!\n\nExplanation!The!provided",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "702163_1993.txt",
+      "raw_answer": "! 431! 1",
+      "normalized_answer": null,
+      "context_tokens": 183
+    }
+  ]
+}

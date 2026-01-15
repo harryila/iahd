@@ -1,0 +1,409 @@
+{
+  "model": "qwen",
+  "model_name": "Qwen/Qwen2.5-7B-Instruct",
+  "context": "short",
+  "num_samples": 50,
+  "accuracy": 0.32,
+  "results": [
+    {
+      "filename": "92116_1993.txt",
+      "raw_answer": "4342\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "4342",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "103730_1993.txt",
+      "raw_answer": "1441\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "1441",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "100240_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided text does not explicitly",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "58696_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided excerpt from",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "46207_1993.txt",
+      "raw_answer": "24672\nUNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "24672",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "60041_1993.txt",
+      "raw_answer": "3116\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "3116",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "55387_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided excerpt does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "1",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "40878_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided context,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "53540_1993.txt",
+      "raw_answer": "785\nUNKNOWN\n```markdown",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "785",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "800287_1993.txt",
+      "raw_answer": "5107\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "5107",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "725625_1993.txt",
+      "raw_answer": "575\nUNKNOWN\n```markdown",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "575",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "66479_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided context,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "700674_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided excerpt does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "1033",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "854094_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided context does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "846972_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided excerpt does not explicitly",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "152",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "59478_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided context does not explicitly",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "5550_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided excerpt does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "1734",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "22767_1993.txt",
+      "raw_answer": "10705\nUNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "738339_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided text does not explicitly",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "585",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "29854_1993.txt",
+      "raw_answer": "806\nUNKNOWN\n```markdown",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "806",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "97210_1993.txt",
+      "raw_answer": "3225\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "3225",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "7383_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided context,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "80661_1993.txt",
+      "raw_answer": "4849\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "4849",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "711404_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided excerpt,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "4550",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "75042_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided text does not explicitly",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "18497_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided excerpt does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "1197",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "33565_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided excerpt,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "745287_1993.txt",
+      "raw_answer": "881\nUNKNOWN\n```markdown",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "881",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "93469_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided context,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "354869_1993.txt",
+      "raw_answer": "6673\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "6673",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "36966_1993.txt",
+      "raw_answer": "7893\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "7893",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "799036_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided excerpt does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "600",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "25890_1993.txt",
+      "raw_answer": "6163\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "6163",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "764764_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided excerpt from",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "717605_1993.txt",
+      "raw_answer": "2294\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "2294",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "92487_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided text does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "79166_1993.txt",
+      "raw_answer": "638\nUNKNOWN\nUNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "638",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "355883_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided context,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "865227_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided excerpt does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "101320_1993.txt",
+      "raw_answer": "20636\nUNKNOWN",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "20636",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "64605_1993.txt",
+      "raw_answer": "1746\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "1746",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "884033_1993.txt",
+      "raw_answer": "UNKNOWN\nThe number of holders of record",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "7",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "17797_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided excerpt,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "72863",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "216228_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided excerpt,",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "60000",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "791445_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided excerpt from",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "1",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "719264_1993.txt",
+      "raw_answer": "617\nUNKNOWN\n```markdown",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "617",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "92050_1993.txt",
+      "raw_answer": "UNKNOWN\nThe provided excerpt does not contain",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "UNKNOWN",
+      "correct": true,
+      "context_tokens": 200
+    },
+    {
+      "filename": "788043_1993.txt",
+      "raw_answer": "1837\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "1837",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "29989_1993.txt",
+      "raw_answer": "UNKNOWN\nBased on the provided excerpt from",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "2672",
+      "correct": false,
+      "context_tokens": 200
+    },
+    {
+      "filename": "702163_1993.txt",
+      "raw_answer": "4311\nUNKNOWN\n```",
+      "normalized_answer": "UNKNOWN",
+      "ground_truth": "4311",
+      "correct": false,
+      "context_tokens": 200
+    }
+  ]
+}

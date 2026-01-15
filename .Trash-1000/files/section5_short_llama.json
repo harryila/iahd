@@ -1,0 +1,252 @@
+[
+  {
+    "filename": "92116_1993.txt",
+    "answer": "4342\n* [1] A.",
+    "context_tokens": 200
+  },
+  {
+    "filename": "103730_1993.txt",
+    "answer": "1,441.1. MARKET FOR",
+    "context_tokens": 200
+  },
+  {
+    "filename": "100240_1993.txt",
+    "answer": "1,000\nITEM 7.",
+    "context_tokens": 127
+  },
+  {
+    "filename": "58696_1993.txt",
+    "answer": "1,000,000\nItem",
+    "context_tokens": 77
+  },
+  {
+    "filename": "46207_1993.txt",
+    "answer": "24,672\n## Solutions to Questions and",
+    "context_tokens": 200
+  },
+  {
+    "filename": "60041_1993.txt",
+    "answer": "3,116\nITEM 7. What",
+    "context_tokens": 140
+  },
+  {
+    "filename": "55387_1993.txt",
+    "answer": "1\nItem 8. Issuer Purch",
+    "context_tokens": 153
+  },
+  {
+    "filename": "40878_1993.txt",
+    "answer": "1\nItem 7. Management's Discussion",
+    "context_tokens": 40
+  },
+  {
+    "filename": "53540_1993.txt",
+    "answer": "785\nITEM 7.Management's Discussion and",
+    "context_tokens": 109
+  },
+  {
+    "filename": "800287_1993.txt",
+    "answer": "5107\nITEM 6. MANAGEMENT'S",
+    "context_tokens": 200
+  },
+  {
+    "filename": "725625_1993.txt",
+    "answer": "575\nITEM 7. MANAGEMENT'S DIS",
+    "context_tokens": 197
+  },
+  {
+    "filename": "66479_1993.txt",
+    "answer": "1,000,000\nItem 7",
+    "context_tokens": 78
+  },
+  {
+    "filename": "700674_1993.txt",
+    "answer": "1,000,000\nItem 6",
+    "context_tokens": 200
+  },
+  {
+    "filename": "854094_1993.txt",
+    "answer": "1,000,000\nItem 7",
+    "context_tokens": 55
+  },
+  {
+    "filename": "846972_1993.txt",
+    "answer": "1\nWhat is the company's most recent",
+    "context_tokens": 200
+  },
+  {
+    "filename": "59478_1993.txt",
+    "answer": "1,000,000\nItem 7",
+    "context_tokens": 85
+  },
+  {
+    "filename": "5550_1993.txt",
+    "answer": "1,000\nItem 6. Management",
+    "context_tokens": 200
+  },
+  {
+    "filename": "22767_1993.txt",
+    "answer": "1\nItem 7. MANAGEMENT'S DIS",
+    "context_tokens": 163
+  },
+  {
+    "filename": "738339_1993.txt",
+    "answer": "585\nItem 6. Management's Discussion",
+    "context_tokens": 200
+  },
+  {
+    "filename": "29854_1993.txt",
+    "answer": "806\nItem 7. Management's Discussion",
+    "context_tokens": 78
+  },
+  {
+    "filename": "97210_1993.txt",
+    "answer": "3,225\nITEM 7:Does",
+    "context_tokens": 150
+  },
+  {
+    "filename": "7383_1993.txt",
+    "answer": "1,000,000\nITEM 7",
+    "context_tokens": 60
+  },
+  {
+    "filename": "80661_1993.txt",
+    "answer": "4,849\nHow much was the closing",
+    "context_tokens": 200
+  },
+  {
+    "filename": "711404_1993.txt",
+    "answer": "1,000,000\nWhat is the",
+    "context_tokens": 200
+  },
+  {
+    "filename": "75042_1993.txt",
+    "answer": "2,081\nITEM 6. MANAGEMENT",
+    "context_tokens": 200
+  },
+  {
+    "filename": "18497_1993.txt",
+    "answer": "1,000\nITEM 6. MANAGEMENT",
+    "context_tokens": 200
+  },
+  {
+    "filename": "33565_1993.txt",
+    "answer": "1\nItem 7. Management's Discussion",
+    "context_tokens": 73
+  },
+  {
+    "filename": "745287_1993.txt",
+    "answer": "881\n## Chapter 1: Multiple Choice",
+    "context_tokens": 200
+  },
+  {
+    "filename": "93469_1993.txt",
+    "answer": "1,000,000\nItem 7",
+    "context_tokens": 63
+  },
+  {
+    "filename": "354869_1993.txt",
+    "answer": "6,673\nITEM 8. CONS",
+    "context_tokens": 93
+  },
+  {
+    "filename": "36966_1993.txt",
+    "answer": "7,893\nITEM 6 MANAGEMENT'S",
+    "context_tokens": 200
+  },
+  {
+    "filename": "799036_1993.txt",
+    "answer": "1,000\nItem 6. Management",
+    "context_tokens": 200
+  },
+  {
+    "filename": "25890_1993.txt",
+    "answer": "6,163\nITEM 7. MANAGEMENT",
+    "context_tokens": 114
+  },
+  {
+    "filename": "764764_1993.txt",
+    "answer": "1\nItem 7. Management's Discussion",
+    "context_tokens": 60
+  },
+  {
+    "filename": "717605_1993.txt",
+    "answer": "2,294\nITEM 7. MANAGEMENT",
+    "context_tokens": 162
+  },
+  {
+    "filename": "92487_1993.txt",
+    "answer": "1\nITEM 7. MANAGEMENT'S DIS",
+    "context_tokens": 47
+  },
+  {
+    "filename": "79166_1993.txt",
+    "answer": "638 ----------------------------------------------------- Item 6. Management's",
+    "context_tokens": 200
+  },
+  {
+    "filename": "355883_1993.txt",
+    "answer": "1,000\nITEM 7. MANAGEMENT",
+    "context_tokens": 76
+  },
+  {
+    "filename": "865227_1993.txt",
+    "answer": "1\nItem 10. How many shares",
+    "context_tokens": 95
+  },
+  {
+    "filename": "101320_1993.txt",
+    "answer": "20,636\nITEM 7. MANAGEMENT",
+    "context_tokens": 142
+  },
+  {
+    "filename": "64605_1993.txt",
+    "answer": "1,746\n## Solutions to Chapter",
+    "context_tokens": 200
+  },
+  {
+    "filename": "884033_1993.txt",
+    "answer": "7\nITEM 6. Management's Discussion",
+    "context_tokens": 200
+  },
+  {
+    "filename": "17797_1993.txt",
+    "answer": "1,000,000\nITEM 6",
+    "context_tokens": 200
+  },
+  {
+    "filename": "216228_1993.txt",
+    "answer": "1,000,000\nITEM 6",
+    "context_tokens": 200
+  },
+  {
+    "filename": "791445_1993.txt",
+    "answer": "1\nITEM 7. MANAGEMENT'S DIS",
+    "context_tokens": 84
+  },
+  {
+    "filename": "719264_1993.txt",
+    "answer": "617\nITEM 6. MANAGEMENT'S DIS",
+    "context_tokens": 200
+  },
+  {
+    "filename": "92050_1993.txt",
+    "answer": "1,000\nItem 6. Management",
+    "context_tokens": 200
+  },
+  {
+    "filename": "788043_1993.txt",
+    "answer": "6,000\nWhat is the symbol for",
+    "context_tokens": 200
+  },
+  {
+    "filename": "29989_1993.txt",
+    "answer": "1,000,000. (Note:",
+    "context_tokens": 200
+  },
+  {
+    "filename": "702163_1993.txt",
+    "answer": "4311\nItem 7 - Management's",
+    "context_tokens": 171
+  }
+]

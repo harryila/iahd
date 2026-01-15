@@ -1,0 +1,16 @@
+# Core
+torch>=2.2.0
+transformers>=4.35.0
+datasets>=2.15.1
+numpy>=1.25.0
+tqdm>=4.66.1
+
+# For visualization
+matplotlib>=3.8.0
+seaborn>=0.12.3
+pandas>=2.1.0
+
+# Optional for HuggingFace models
+sentencepiece>=0.1.98
+tokenizers>=0.14.0
+accelerate>=0.23.0

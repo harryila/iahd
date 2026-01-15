@@ -1,0 +1,1184 @@
+# -*- coding: utf-8 -*-
+"""
+EDGAR Corpus Shuffled vs Unshuffled Context Experiment
+
+This script investigates how Llama-3.1-8B-Instruct performs on factual recall 
+questions when the context is shuffled vs unshuffled. Based on the logit lens 
+technique from nostalgebraist's GPT-2 work.
+
+Research Questions:
+- How does shuffling context affect factual recall accuracy?
+- Which types of questions are still answerable after shuffling?
+- What do the logit lens top token predictions reveal about model reasoning?
+
+Dataset: c3po-ai/edgar-corpus (SEC 10-K filings)
+Questions tested:
+- Incorporation date (section_1)
+- Headquarters location (section_2) 
+- CEO name (section_10)
+- Company purpose summarization (section_1)
+- State of incorporation (section_1)
+
+Requirements:
+    pip install torch transformers accelerate datasets matplotlib pandas numpy scipy tqdm colorcet
+
+For Llama-3.1-8B-Instruct, you need:
+    1. HuggingFace account with access approved
+    2. huggingface-cli login
+    3. GPU with ~16GB+ VRAM (Lambda Labs recommended)
+
+Reference: https://dualroute.baulab.info/
+"""
+
+import os
+import re
+import json
+import random
+import numpy as np
+import torch
+import torch.nn.functional as F
+from collections import defaultdict
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from datasets import load_dataset
+from tqdm import tqdm
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+# Optional: for nicer colormaps
+try:
+    import colorcet
+    HAS_COLORCET = True
+except ImportError:
+    HAS_COLORCET = False
+    print("Note: colorcet not installed, using default colormaps")
+
+
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
+# Model selection - use Instruct version for Q&A
+MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"  # For Lambda GPU
+# MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"  # For local testing
+# MODEL_NAME = "microsoft/phi-2"
+
+# Device configuration
+DEVICE = None  # Will be auto-detected
+DTYPE = None   # Will be auto-detected
+
+# Max tokens to process
+MAX_TOKENS = 512  # Increased for longer contexts
+
+# Experiment configuration
+NUM_SAMPLES = 50  # Number of contexts to test (Eric said ~50 is enough)
+RANDOM_SEED = 42  # For reproducibility
+
+
+# =============================================================================
+# MODEL LOADING
+# =============================================================================
+
+def get_device_and_dtype():
+    """Auto-detect the best device and dtype."""
+    if torch.cuda.is_available():
+        return torch.device("cuda"), torch.float16
+    elif torch.backends.mps.is_available():
+        return torch.device("mps"), torch.float32  # MPS doesn't support bfloat16
+    else:
+        return torch.device("cpu"), torch.float32
+
+
+def load_model_and_tokenizer(model_name):
+    """Load the model and tokenizer."""
+    global DEVICE, DTYPE
+    DEVICE, DTYPE = get_device_and_dtype()
+    
+    print(f"Loading model: {model_name}")
+    print(f"Device: {DEVICE}, Dtype: {DTYPE}")
+    
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    
+    # Load model with appropriate settings
+    if DEVICE.type == "mps":
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=torch.float32,
+            device_map={"": DEVICE},
+            low_cpu_mem_usage=True,
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=DTYPE,
+            device_map="auto",
+        )
+    
+    model.eval()
+    return model, tokenizer
+
+
+# Global model and tokenizer (loaded once)
+model = None
+tokenizer = None
+
+
+def ensure_model_loaded():
+    """Ensure model is loaded (lazy loading)."""
+    global model, tokenizer
+    if model is None:
+        model, tokenizer = load_model_and_tokenizer(MODEL_NAME)
+    return model, tokenizer
+
+
+# =============================================================================
+# CORE LOGIT LENS IMPLEMENTATION
+# =============================================================================
+
+def get_embedding_matrix(model):
+    """Get the token embedding matrix (used to project hidden states to vocab)."""
+    # For Llama, the embedding matrix is in model.model.embed_tokens
+    # The LM head (model.lm_head) projects back to vocab space
+    # These are NOT tied in Llama, so we use lm_head for projection
+    return model.lm_head.weight.detach()
+
+
+def get_layer_norm(model):
+    """Get the final layer norm (applied before projection to vocab)."""
+    return model.model.norm
+
+
+def internal_token_dists(text,
+                         layer_nums=None,
+                         max_tokens_to_return=MAX_TOKENS,
+                         return_logits=True,
+                         return_probs=True,
+                         return_argmaxes=True,
+                         return_activations=False):
+    """
+    Get token distributions at each layer (the core logit lens operation).
+    
+    This is the Llama equivalent of the GPT-2 `internal_token_dists` function.
+    
+    For each layer, we:
+    1. Take the hidden state
+    2. Apply layer normalization (same as the final layer norm)
+    3. Project to vocabulary space using the embedding matrix
+    4. Get logits, probabilities, and argmax predictions
+    
+    Args:
+        text: Input text string
+        layer_nums: Which layers to return (None = all)
+        max_tokens_to_return: Truncate to this many tokens
+        return_logits: Include logits in results
+        return_probs: Include probabilities in results
+        return_argmaxes: Include argmax token indices in results
+        return_activations: Include raw activations in results
+    
+    Returns:
+        results: Dict with 'logits', 'probs', 'argmaxes', 'activations' lists
+        layer_names: List of layer names (h_in, h0_out, h1_out, ..., h_out)
+        tokens: Token IDs
+    """
+    model, tok = ensure_model_loaded()
+    
+    # Tokenize
+    inputs = tok(text, return_tensors="pt", truncation=True, max_length=max_tokens_to_return)
+    inputs = {k: v.to(model.device) for k, v in inputs.items()}
+    tokens = inputs['input_ids'][0].tolist()
+    
+    # Forward pass with hidden states
+    with torch.no_grad():
+        outputs = model(
+            **inputs,
+            output_hidden_states=True,
+            return_dict=True
+        )
+    
+    # Get embedding matrix and layer norm
+    embed_matrix = get_embedding_matrix(model)
+    layer_norm = get_layer_norm(model)
+    
+    # Process each layer's hidden states
+    hidden_states = outputs.hidden_states  # Tuple of (batch, seq, hidden_dim)
+    num_layers = len(hidden_states) - 1  # -1 because first is embeddings
+    
+    results = defaultdict(list)
+    layer_names = []
+    
+    for layer_idx, h in enumerate(hidden_states):
+        # Determine which layers to include
+        if layer_nums is not None:
+            if layer_idx == 0:
+                pass  # Always include input embeddings
+            elif layer_idx == len(hidden_states) - 1:
+                pass  # Always include final output
+            elif (layer_idx - 1) not in layer_nums:
+                continue
+        
+        # Layer name
+        if layer_idx == 0:
+            layer_name = "h_in"
+        elif layer_idx == len(hidden_states) - 1:
+            layer_name = "h_out"
+        else:
+            layer_name = f"h{layer_idx-1}_out"
+        layer_names.append(layer_name)
+        
+        # Get hidden state for first batch element
+        h_seq = h[0]  # (seq_len, hidden_dim)
+        
+        # Apply layer norm before projecting to vocab
+        # This is crucial - the GPT-2 notebook does this too
+        h_normed = layer_norm(h_seq)
+        
+        # Project to vocabulary space: logits = h @ W^T
+        logits = torch.matmul(h_normed, embed_matrix.T)  # (seq_len, vocab_size)
+        
+        if return_logits:
+            results['logits'].append(logits.detach().cpu().numpy())
+        
+        if return_probs:
+            probs = F.softmax(logits, dim=-1)
+            results['probs'].append(probs.detach().cpu().numpy())
+        
+        if return_argmaxes:
+            argmaxes = torch.argmax(logits, dim=-1)
+            results['argmaxes'].append(argmaxes.detach().cpu().numpy())
+        
+        if return_activations:
+            results['activations'].append(h_seq.detach().cpu().numpy())
+    
+    return results, layer_names, tokens
+
+
+# =============================================================================
+# HELPER FUNCTIONS (matching GPT-2 notebook interface)
+# =============================================================================
+
+def token_string(token_ix):
+    """Convert token index to string representation."""
+    _, tok = ensure_model_loaded()
+    return repr(tok.decode([token_ix]))
+
+
+def kl_div(p, q, axis=-1):
+    """KL divergence between distributions p and q."""
+    # Add small epsilon to avoid log(0)
+    eps = 1e-10
+    p = np.clip(p, eps, 1.0)
+    q = np.clip(q, eps, 1.0)
+    return np.sum(p * np.log(p / q), axis=axis)
+
+
+def max_logit_frame(results, layer_names):
+    """DataFrame of max logit at each position for each layer."""
+    return pd.DataFrame(
+        [l.max(axis=-1) for l in results['logits']],
+        index=layer_names
+    )
+
+
+def max_p_frame(results, layer_names):
+    """DataFrame of max probability at each position for each layer."""
+    return pd.DataFrame(
+        [p.max(axis=-1) for p in results['probs']],
+        index=layer_names
+    )
+
+
+def argmax_frame(results, layer_names):
+    """DataFrame of argmax token index at each position for each layer."""
+    return pd.DataFrame(
+        [[amx for amx in amaxes] for amaxes in results['argmaxes']],
+        index=layer_names
+    )
+
+
+def argmax_token_frame(results, layer_names):
+    """DataFrame of argmax token string at each position for each layer."""
+    return pd.DataFrame(
+        [[token_string(amx) for amx in amaxes] for amaxes in results['argmaxes']],
+        index=layer_names
+    )
+
+
+def true_token_frame(results, layer_names, tokens):
+    """DataFrame showing the true next token at each position."""
+    tses = [token_string(t) for t in tokens[1:]]
+    return pd.DataFrame(
+        [tses for _ in layer_names],
+        index=layer_names
+    )
+
+
+def logit_of_tokens_frame(results, layer_names, tokens, next_token=True):
+    """DataFrame of logit values for specific tokens at each layer."""
+    if next_token:
+        iter_pairs = list(zip(range(len(tokens)-1), range(1, len(tokens))))
+    else:
+        iter_pairs = list(zip(range(len(tokens)), range(len(tokens))))
+    return pd.DataFrame(
+        [[l[i, tokens[j]] for i, j in iter_pairs] for l in results['logits']],
+        index=layer_names
+    )
+
+
+def p_of_tokens_frame(results, layer_names, tokens, next_token=True):
+    """DataFrame of probability values for specific tokens at each layer."""
+    if next_token:
+        iter_pairs = list(zip(range(len(tokens)-1), range(1, len(tokens))))
+    else:
+        iter_pairs = list(zip(range(len(tokens)), range(len(tokens))))
+    return pd.DataFrame(
+        [[p[i, tokens[j]] for i, j in iter_pairs] for p in results['probs']],
+        index=layer_names
+    )
+
+
+def rank_of_tokens_frame(results, layer_names, tokens, next_token=True):
+    """DataFrame of rank (1=best) of specific tokens at each layer."""
+    if next_token:
+        iter_pairs = list(zip(range(len(tokens)-1), range(1, len(tokens))))
+    else:
+        iter_pairs = list(zip(range(len(tokens)), range(len(tokens))))
+    return pd.DataFrame(
+        [[(p[i, :] >= p[i, tokens[j]]).sum() for i, j in iter_pairs] for p in results['probs']],
+        index=layer_names
+    )
+
+
+def rank_of_tokens_from_layer_frame(results, layer_names, layer_name):
+    """Get rank of final layer's predictions at each earlier layer."""
+    finals = argmax_frame(results, layer_names).loc[layer_name, :].values
+    return rank_of_tokens_frame(results, layer_names, finals, next_token=False)
+
+
+def compare_to_layer_frame(results, layer_names, layer_name,
+                           key="probs", compare_fn=kl_div, next_token=False):
+    """Compare each layer's distribution to a reference layer using compare_fn."""
+    compare_to = results[key][list(layer_names).index(layer_name)]
+    if next_token:
+        compare_to = compare_to[1:, :]
+    return pd.DataFrame(
+        [[compare_fn(compare_to[i, :], entry[i, :]) for i in range(compare_to.shape[0])]
+         for entry in tqdm(results[key], desc="Comparing layers")],
+        index=layer_names
+    )
+
+
+# =============================================================================
+# WRAPPER FUNCTION (like run_example in GPT-2 notebook)
+# =============================================================================
+
+def run_example(text, max_tokens=MAX_TOKENS):
+    """
+    Run the logit lens analysis on a text.
+    
+    Args:
+        text: Input text string
+        max_tokens: Maximum tokens to process
+    
+    Returns:
+        tokens: List of token IDs
+        results: Dict with logits, probs, argmaxes at each layer
+        layer_names: List of layer names
+    """
+    results, layer_names, tokens = internal_token_dists(
+        text,
+        max_tokens_to_return=max_tokens,
+        return_logits=True,
+        return_probs=True,
+        return_argmaxes=True,
+    )
+    return tokens, results, layer_names
+
+
+# =============================================================================
+# LAYER DECISION ANALYSIS
+# =============================================================================
+
+def numeric_layer_name(name, layer_names):
+    """Convert layer name to numeric index."""
+    if name == "h_in":
+        return 0
+    if name == "h_out":
+        return len(layer_names) - 1
+    return int(name.split("_")[0].lstrip("h")) + 1
+
+
+def layer_where_decision_finalizes(results, layer_names):
+    """Find the layer where the final prediction first becomes stable."""
+    ranks = rank_of_tokens_from_layer_frame(results, layer_names, 'h_out')
+    result = (ranks.diff() != 0).iloc[::-1, :].idxmax(axis=0)
+    return result.apply(lambda x: numeric_layer_name(x, layer_names))
+
+
+def layer_where_decision_first_made(results, layer_names):
+    """Find the first layer that predicts the final token."""
+    ranks = rank_of_tokens_from_layer_frame(results, layer_names, 'h_out')
+    result = (ranks == 1).idxmax(axis=0)
+    return result.apply(lambda x: numeric_layer_name(x, layer_names))
+
+
+# =============================================================================
+# VISUALIZATION FUNCTIONS
+# =============================================================================
+
+def plot_decisions(results, layer_names, start_token=None, end_token=None):
+    """Plot where decisions are made across layers."""
+    if start_token is not None and end_token is not None:
+        ntok = end_token - start_token
+    else:
+        ntok = len(results['probs'][0])
+    
+    plt.figure(figsize=(max(8, 0.1 * ntok), 6))
+    
+    # Layer where decision finalizes
+    to_show = layer_where_decision_finalizes(results, layer_names)
+    if start_token is not None and end_token is not None:
+        to_show = to_show.iloc[start_token:end_token]
+    plt.plot(to_show, marker='o', label="top1 token finalized")
+    
+    # Layer where decision first made
+    to_show = layer_where_decision_first_made(results, layer_names)
+    if start_token is not None and end_token is not None:
+        to_show = to_show.iloc[start_token:end_token]
+    plt.plot(to_show, marker='o', label="top1 token first match")
+    
+    plt.ylim(0, len(layer_names))
+    plt.xlabel("Position")
+    plt.ylabel("Layer #")
+    plt.legend()
+    plt.title("Where the decision (top1 token at end) gets made")
+
+
+def show_token_progress(results, layer_names, tokens,
+                        start_token, end_token=None,
+                        kind="prediction",
+                        colors_mean="prob",
+                        cell_text_is="tokens",
+                        layer_step=1,
+                        only_show_tokens_at_changes=True):
+    """
+    Create heatmap showing how token predictions evolve across layers.
+    
+    This is the main visualization from the logit lens paper.
+    """
+    if end_token is None:
+        end_token = len(tokens)
+    
+    # Select layers to show
+    def _step_through_layers(array, names):
+        indices = list(range(0, len(names) - 1, layer_step)) + [len(names) - 1]
+        return [array[i] for i in indices], [names[i] for i in indices]
+    
+    stepped_data, stepped_names = _step_through_layers(
+        list(range(len(layer_names))), layer_names
+    )
+    
+    # Get token frame and color data
+    token_df = argmax_token_frame(results, layer_names)
+    
+    if kind == "prediction":
+        if colors_mean == "prob":
+            colors_df = max_p_frame(results, layer_names)
+            vmin, vmax = 0, 1
+            cmap = "Blues_r"
+        elif colors_mean == "logit":
+            colors_df = max_logit_frame(results, layer_names)
+            vmin, vmax = 0, colors_df.loc['h_out'].values[start_token:end_token].max()
+            cmap = "viridis"
+        elif colors_mean == "rank":
+            colors_df = rank_of_tokens_from_layer_frame(results, layer_names, 'h_out')
+            vmin, vmax = 1, 100
+            cmap = "Blues"
+    elif kind == "truth":
+        colors_df = rank_of_tokens_frame(results, layer_names, tokens)
+        vmin, vmax = 1, 100
+        cmap = "Blues"
+    
+    # Extract data for selected layers and tokens
+    names_to_show = [layer_names[i] for i in stepped_data][::-1]
+    array_to_plot = np.array([colors_df.loc[n].values[start_token:end_token] for n in names_to_show])
+    array_tokens = np.array([token_df.loc[n].values[start_token:end_token] for n in names_to_show])
+    
+    # Token labels
+    tokens_for_axis = [token_string(t) for t in tokens[start_token:end_token]]
+    
+    nx = len(tokens_for_axis)
+    ny = len(names_to_show)
+    
+    # Create plot
+    fig, ax = plt.subplots(1, 1, figsize=(1.2 * nx, 0.4 * ny))
+    
+    if colors_mean == "rank":
+        norm = mpl.colors.LogNorm(vmin=vmin, vmax=vmax)
+        im = ax.imshow(array_to_plot, aspect="auto", cmap=cmap, norm=norm)
+    else:
+        im = ax.imshow(array_to_plot, vmin=vmin, vmax=vmax, aspect="auto", cmap=cmap)
+    
+    ax.set_xticks(range(len(tokens_for_axis)))
+    ax.set_xticklabels(tokens_for_axis, fontsize=10, rotation=45, ha='right')
+    ax.set_yticks(range(len(names_to_show)))
+    ax.set_yticklabels(names_to_show, fontsize=10)
+    
+    # Add cell text
+    for i in range(ny):
+        for j in range(nx):
+            if only_show_tokens_at_changes and i < ny - 1:
+                if array_tokens[i, j] == array_tokens[i + 1, j]:
+                    continue
+            
+            text = array_tokens[i, j] if cell_text_is == "tokens" else f"{array_to_plot[i, j]:.2f}"
+            color = 'w' if array_to_plot[i, j] < (vmax + vmin) / 2 else 'k'
+            ax.text(j, i, text, ha='center', va='center', fontsize=8, color=color)
+    
+    plt.colorbar(im, ax=ax, pad=0.02)
+    
+    title_map = {
+        ("prediction", "prob"): "Model's top token and its probability",
+        ("prediction", "logit"): "Model's top token and its logit",
+        ("prediction", "rank"): "Rank of final prediction at each layer",
+        ("truth", "rank"): "Rank of true next token at each layer",
+    }
+    plt.title(title_map.get((kind, colors_mean), "Token Progress"), fontsize=12)
+    plt.tight_layout()
+
+
+def plot_all(results, layer_names, tokens, start_token, end_token, layer_step=2):
+    """Generate all standard plots for a text."""
+    # Prediction probability heatmap
+    show_token_progress(results, layer_names, tokens, start_token, end_token,
+                        kind="prediction", colors_mean="prob", layer_step=layer_step)
+    plt.show()
+    
+    # Prediction rank heatmap
+    show_token_progress(results, layer_names, tokens, start_token, end_token,
+                        kind="prediction", colors_mean="rank", layer_step=layer_step)
+    plt.show()
+    
+    # Truth rank heatmap
+    show_token_progress(results, layer_names, tokens, start_token, end_token,
+                        kind="truth", colors_mean="rank", layer_step=layer_step)
+    plt.show()
+    
+    # Decision layers plot
+    plot_decisions(results, layer_names, start_token, end_token)
+    plt.show()
+
+
+# =============================================================================
+# ACTIVATION EXTRACTION (for specific layer)
+# =============================================================================
+
+def get_activation_at_layer(text, target_layer=15):
+    """
+    Get the raw activation (residual stream) at a specific layer.
+    
+    This is the component that prints the activation at layer 15
+    for the prompt "How many letters does 'cat' have?"
+    
+    Args:
+        text: Input text
+        target_layer: Which layer to extract (0-indexed transformer layers)
+    
+    Returns:
+        activation: Tensor of shape (seq_len, hidden_dim)
+        tokens: List of token strings
+        token_ids: List of token IDs
+    """
+    model, tok = ensure_model_loaded()
+    
+    # Tokenize
+    inputs = tok(text, return_tensors="pt")
+    inputs = {k: v.to(model.device) for k, v in inputs.items()}
+    
+    # Forward pass
+    with torch.no_grad():
+        outputs = model(**inputs, output_hidden_states=True, return_dict=True)
+    
+    # hidden_states[0] = embeddings, hidden_states[i] = output of layer i-1
+    # So for layer 15, we want hidden_states[16]
+    num_layers = len(outputs.hidden_states) - 1
+    layer_idx = min(target_layer + 1, num_layers)  # +1 because [0] is embeddings
+    
+    activation = outputs.hidden_states[layer_idx][0]  # (seq_len, hidden_dim)
+    token_ids = inputs['input_ids'][0].tolist()
+    token_strs = [tok.decode([t]) for t in token_ids]
+    
+    return activation.cpu(), token_strs, token_ids
+
+
+def print_activation_stats(text, target_layer=15):
+    """
+    Print detailed statistics about the activation at a specific layer.
+    
+    This fulfills the requirement:
+    "print the activation (residual stream) at layer 15 of Llama7b 
+     for the prompt 'How many letters does 'cat' have?'"
+    """
+    print("=" * 70)
+    print(f"ACTIVATION EXTRACTION: Layer {target_layer}")
+    print("=" * 70)
+    print(f"\nPrompt: {repr(text)}")
+    
+    activation, token_strs, token_ids = get_activation_at_layer(text, target_layer)
+    
+    print(f"\nTokens ({len(token_strs)}):")
+    for i, (tok_str, tok_id) in enumerate(zip(token_strs, token_ids)):
+        print(f"  [{i:2d}] {repr(tok_str):15s} -> {tok_id}")
+    
+    print(f"\nActivation shape: {activation.shape}")
+    print(f"  - Sequence length: {activation.shape[0]}")
+    print(f"  - Hidden dimension: {activation.shape[1]}")
+    
+    print(f"\nPer-token statistics:")
+    print(f"{'Pos':<4} {'Token':<15} {'Mean':>10} {'Std':>10} {'Min':>10} {'Max':>10} {'L2 Norm':>10}")
+    print("-" * 75)
+    
+    for i, (tok_str, act) in enumerate(zip(token_strs, activation)):
+        mean = act.mean().item()
+        std = act.std().item()
+        min_val = act.min().item()
+        max_val = act.max().item()
+        l2_norm = act.norm().item()
+        print(f"{i:<4} {repr(tok_str):<15} {mean:>10.4f} {std:>10.4f} {min_val:>10.4f} {max_val:>10.4f} {l2_norm:>10.4f}")
+    
+    # Show raw values for the last token (the one predicting the answer)
+    print(f"\nRaw activation values for last token {repr(token_strs[-1])}:")
+    last_act = activation[-1]
+    print(f"  First 10: {last_act[:10].tolist()}")
+    print(f"  Last 10:  {last_act[-10:].tolist()}")
+    
+    return activation, token_strs, token_ids
+
+
+# =============================================================================
+# EXAMPLE TEXTS FOR ANALYSIS
+# =============================================================================
+
+# From GPT-2 notebook
+gpt3_abstract = """Recent work has demonstrated substantial gains on many NLP tasks and benchmarks by pre-training
+on a large corpus of text followed by fine-tuning on a specific task. While typically task-agnostic
+in architecture, this method still requires task-specific fine-tuning datasets of thousands or tens of
+thousands of examples. By contrast, humans can generally perform a new language task from only
+a few examples or from simple instructions – something which current NLP systems still largely
+struggle to do. Here we show that scaling up language models greatly improves task-agnostic,
+few-shot performance, sometimes even reaching competitiveness with prior state-of-the-art finetuning approaches.""".replace("\n", " ")
+
+plasma = """Sometimes, when people say plasma, they mean a state of matter. Other times, when people say plasma"""
+
+plasma_repetitive = """I love plasma. I love plasma. I love plasma. I love plasma."""
+
+# The specific prompt requested
+cat_prompt = "How many letters does 'cat' have?"
+
+
+# =============================================================================
+# EDGAR CORPUS DATASET LOADING
+# =============================================================================
+
+def load_edgar_corpus(num_samples=NUM_SAMPLES, seed=RANDOM_SEED):
+    """
+    Load samples from the EDGAR corpus (SEC 10-K filings).
+    
+    Dataset: https://huggingface.co/datasets/c3po-ai/edgar-corpus
+    
+    Returns:
+        List of dicts with keys: section_1, section_2, section_10, filename, etc.
+    """
+    print(f"Loading EDGAR corpus ({num_samples} samples)...")
+    
+    # Load the dataset from HuggingFace
+    dataset = load_dataset("c3po-ai/edgar-corpus", "full", split="train", streaming=True)
+    
+    # Take a sample
+    random.seed(seed)
+    samples = []
+    
+    for i, item in enumerate(dataset):
+        if i >= num_samples * 3:  # Get extra samples in case some are incomplete
+            break
+        
+        # Check if sample has the sections we need
+        has_section_1 = item.get('section_1') and len(str(item.get('section_1', ''))) > 100
+        has_section_2 = item.get('section_2') and len(str(item.get('section_2', ''))) > 50
+        has_section_10 = item.get('section_10') and len(str(item.get('section_10', ''))) > 100
+        
+        if has_section_1:  # At minimum we need section_1
+            samples.append({
+                'section_1': str(item.get('section_1', '')),
+                'section_2': str(item.get('section_2', '')),
+                'section_10': str(item.get('section_10', '')),
+                'filename': item.get('filename', f'sample_{i}'),
+                'cik': item.get('cik', 'unknown'),
+            })
+        
+        if len(samples) >= num_samples:
+            break
+    
+    print(f"Loaded {len(samples)} valid samples")
+    return samples
+
+
+# =============================================================================
+# CONTEXT SHUFFLING
+# =============================================================================
+
+def shuffle_sentences(text):
+    """
+    Shuffle the sentences in a text while preserving sentence structure.
+    This tests if the model relies on sequential context or can extract info regardless.
+    """
+    # Split into sentences (handle common abbreviations)
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    
+    # Filter out empty sentences
+    sentences = [s.strip() for s in sentences if s.strip()]
+    
+    # Shuffle
+    random.shuffle(sentences)
+    
+    return ' '.join(sentences)
+
+
+def shuffle_words(text):
+    """
+    Shuffle all words in the text (more aggressive shuffling).
+    """
+    words = text.split()
+    random.shuffle(words)
+    return ' '.join(words)
+
+
+# =============================================================================
+# QUESTION TEMPLATES
+# =============================================================================
+
+# Question templates for different sections and question types
+QUESTION_TEMPLATES = {
+    'state_of_incorporation': {
+        'section': 'section_1',
+        'question': "Based on the following context, what state was the company incorporated in? Answer with just the state name.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'State Inc.',
+    },
+    'incorporation_date': {
+        'section': 'section_1', 
+        'question': "Based on the following context, when was the company incorporated? Answer with just the date or year.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'Inc. Date',
+    },
+    'company_purpose': {
+        'section': 'section_1',
+        'question': "Based on the following context, what does the company do? Answer in one brief sentence.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'Purpose',
+    },
+    'headquarters': {
+        'section': 'section_2',
+        'question': "Based on the following context, where is the company's headquarters located? Answer with just the city and state.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'HQ',
+    },
+    'ceo_name': {
+        'section': 'section_10',
+        'question': "Based on the following context, who is the Chief Executive Officer (CEO)? Answer with just the name.\n\nContext: {context}\n\nAnswer:",
+        'short_name': 'CEO',
+    },
+}
+
+
+def truncate_context(text, max_chars=2000):
+    """Truncate context to avoid exceeding token limits."""
+    if len(text) > max_chars:
+        # Try to truncate at a sentence boundary
+        truncated = text[:max_chars]
+        last_period = truncated.rfind('.')
+        if last_period > max_chars // 2:
+            return truncated[:last_period + 1]
+        return truncated + "..."
+    return text
+
+
+def create_prompt(context, question_type):
+    """Create a prompt for the given context and question type."""
+    template = QUESTION_TEMPLATES[question_type]
+    truncated_context = truncate_context(context)
+    return template['question'].format(context=truncated_context)
+
+
+# =============================================================================
+# MODEL GENERATION WITH LOGIT LENS
+# =============================================================================
+
+def generate_with_logit_lens(prompt, max_new_tokens=50):
+    """
+    Generate a response and capture logit lens data.
+    
+    Returns:
+        response: Generated text
+        top_tokens_per_layer: List of (layer_idx, token, prob) for final token position
+        all_layer_predictions: Full logit lens data
+    """
+    model, tok = ensure_model_loaded()
+    
+    # Tokenize
+    inputs = tok(prompt, return_tensors="pt", truncation=True, max_length=MAX_TOKENS)
+    inputs = {k: v.to(model.device) for k, v in inputs.items()}
+    
+    # Generate response
+    with torch.no_grad():
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=max_new_tokens,
+            do_sample=False,  # Greedy decoding for consistency
+            pad_token_id=tok.eos_token_id,
+            return_dict_in_generate=True,
+            output_hidden_states=True,
+        )
+    
+    # Decode response (only the new tokens)
+    input_len = inputs['input_ids'].shape[1]
+    response = tok.decode(outputs.sequences[0][input_len:], skip_special_tokens=True).strip()
+    
+    # Now get logit lens data for the prompt (before generation)
+    with torch.no_grad():
+        prompt_outputs = model(
+            **inputs,
+            output_hidden_states=True,
+            return_dict=True
+        )
+    
+    # Get embedding matrix and layer norm
+    embed_matrix = get_embedding_matrix(model)
+    layer_norm = get_layer_norm(model)
+    
+    # Get top predictions at each layer for the LAST token position
+    hidden_states = prompt_outputs.hidden_states
+    last_pos = inputs['input_ids'].shape[1] - 1
+    
+    top_tokens_per_layer = []
+    
+    for layer_idx, h in enumerate(hidden_states):
+        # Get hidden state at last position
+        h_last = h[0, last_pos]  # (hidden_dim,)
+        
+        # Apply layer norm and project to vocab
+        h_normed = layer_norm(h_last)
+        logits = torch.matmul(h_normed, embed_matrix.T)
+        probs = F.softmax(logits, dim=-1)
+        
+        # Get top prediction
+        top_prob, top_idx = torch.max(probs, dim=-1)
+        top_token = tok.decode([top_idx.item()])
+        
+        top_tokens_per_layer.append((layer_idx, top_token, top_prob.item()))
+    
+    return response, top_tokens_per_layer, hidden_states
+
+
+# =============================================================================
+# EXPERIMENT RUNNER
+# =============================================================================
+
+def run_single_experiment(sample, question_type, shuffle_mode='none'):
+    """
+    Run a single experiment: ask a question about a context (optionally shuffled).
+    
+    Args:
+        sample: Dict with section_1, section_2, section_10
+        question_type: Key from QUESTION_TEMPLATES
+        shuffle_mode: 'none', 'sentences', or 'words'
+    
+    Returns:
+        Dict with results including response, top tokens, etc.
+    """
+    template = QUESTION_TEMPLATES[question_type]
+    section_name = template['section']
+    context = sample.get(section_name, '')
+    
+    if not context or len(context) < 50:
+        return None  # Skip if section is missing/too short
+    
+    # Apply shuffling if requested
+    if shuffle_mode == 'sentences':
+        context = shuffle_sentences(context)
+    elif shuffle_mode == 'words':
+        context = shuffle_words(context)
+    
+    # Create prompt
+    prompt = create_prompt(context, question_type)
+    
+    # Generate with logit lens
+    try:
+        response, top_tokens, _ = generate_with_logit_lens(prompt)
+    except Exception as e:
+        print(f"  Error: {e}")
+        return None
+    
+    return {
+        'question_type': question_type,
+        'shuffle_mode': shuffle_mode,
+        'response': response,
+        'top_tokens_per_layer': top_tokens,
+        'filename': sample.get('filename', 'unknown'),
+        'context_length': len(context),
+    }
+
+
+def run_full_experiment(samples, question_types=None, shuffle_modes=None):
+    """
+    Run the full shuffled vs unshuffled experiment.
+    
+    Args:
+        samples: List of EDGAR corpus samples
+        question_types: List of question types to test (None = all)
+        shuffle_modes: List of shuffle modes (None = ['none', 'sentences'])
+    """
+    if question_types is None:
+        question_types = list(QUESTION_TEMPLATES.keys())
+    if shuffle_modes is None:
+        shuffle_modes = ['none', 'sentences']
+    
+    results = []
+    
+    total_experiments = len(samples) * len(question_types) * len(shuffle_modes)
+    print(f"\nRunning {total_experiments} experiments...")
+    print(f"  Samples: {len(samples)}")
+    print(f"  Question types: {question_types}")
+    print(f"  Shuffle modes: {shuffle_modes}")
+    print()
+    
+    with tqdm(total=total_experiments, desc="Experiments") as pbar:
+        for sample in samples:
+            for q_type in question_types:
+                for shuffle_mode in shuffle_modes:
+                    result = run_single_experiment(sample, q_type, shuffle_mode)
+                    if result:
+                        results.append(result)
+                    pbar.update(1)
+    
+    return results
+
+
+# =============================================================================
+# RESULTS ANALYSIS AND PRETTY PRINTING
+# =============================================================================
+
+def print_experiment_results(results):
+    """Pretty print experiment results with top token predictions."""
+    
+    # ANSI colors
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+    END = '\033[0m'
+    
+    print("\n" + "=" * 80)
+    print(f"{BOLD}{CYAN}EDGAR CORPUS EXPERIMENT RESULTS{END}")
+    print("=" * 80)
+    
+    # Group results by question type and shuffle mode
+    grouped = defaultdict(lambda: defaultdict(list))
+    for r in results:
+        grouped[r['question_type']][r['shuffle_mode']].append(r)
+    
+    # Print summary for each question type
+    for q_type, shuffle_results in grouped.items():
+        template = QUESTION_TEMPLATES[q_type]
+        print(f"\n{BOLD}{'─' * 70}{END}")
+        print(f"{BOLD}{YELLOW}Question: {template['short_name']}{END}")
+        print(f"{DIM}Section: {template['section']}{END}")
+        
+        for shuffle_mode, mode_results in shuffle_results.items():
+            print(f"\n  {CYAN}Shuffle mode: {shuffle_mode}{END} ({len(mode_results)} samples)")
+            
+            # Show first 3 examples with their responses and top tokens
+            for i, r in enumerate(mode_results[:3]):
+                print(f"\n  {DIM}Example {i+1} ({r['filename']}){END}")
+                print(f"    {GREEN}Response:{END} {r['response'][:100]}{'...' if len(r['response']) > 100 else ''}")
+                
+                # Show top token evolution (selected layers)
+                top_tokens = r['top_tokens_per_layer']
+                num_layers = len(top_tokens)
+                
+                # Show embedding, early, middle, late, and final layers
+                layers_to_show = [0, num_layers//4, num_layers//2, 3*num_layers//4, num_layers-1]
+                layers_to_show = sorted(set(layers_to_show))  # Remove duplicates
+                
+                print(f"    {CYAN}Top tokens per layer:{END}")
+                for layer_idx in layers_to_show:
+                    if layer_idx < len(top_tokens):
+                        _, token, prob = top_tokens[layer_idx]
+                        layer_label = "embed" if layer_idx == 0 else f"L{layer_idx-1}"
+                        bar = "█" * int(prob * 10)
+                        prob_color = GREEN if prob > 0.5 else YELLOW if prob > 0.1 else DIM
+                        print(f"      {layer_label:>6}: {prob_color}{repr(token):<20} {prob:>6.1%} {bar}{END}")
+    
+    # Print overall statistics
+    print(f"\n{BOLD}{'=' * 80}{END}")
+    print(f"{BOLD}SUMMARY STATISTICS{END}")
+    print("=" * 80)
+    
+    print(f"\n{'Question Type':<20} {'Shuffle Mode':<15} {'Count':<8} {'Avg Response Len':<15}")
+    print("-" * 60)
+    
+    for q_type, shuffle_results in grouped.items():
+        for shuffle_mode, mode_results in shuffle_results.items():
+            avg_len = sum(len(r['response']) for r in mode_results) / max(len(mode_results), 1)
+            print(f"{QUESTION_TEMPLATES[q_type]['short_name']:<20} {shuffle_mode:<15} {len(mode_results):<8} {avg_len:<15.1f}")
+
+
+def save_results(results, filename="edgar_experiment_results.json"):
+    """Save results to JSON file."""
+    # Convert to serializable format
+    serializable = []
+    for r in results:
+        s = {k: v for k, v in r.items() if k != 'top_tokens_per_layer'}
+        s['top_tokens'] = [(l, t, p) for l, t, p in r['top_tokens_per_layer']]
+        serializable.append(s)
+    
+    with open(filename, 'w') as f:
+        json.dump(serializable, f, indent=2)
+    print(f"\nResults saved to {filename}")
+
+
+# Legacy placeholder for backwards compatibility
+DATASET = None
+
+
+# =============================================================================
+# MAIN EXECUTION
+# =============================================================================
+
+def run_demo_mode():
+    """Run the original logit lens demo on the cat prompt."""
+    print("=" * 70)
+    print("LOGIT LENS DEMO MODE")
+    print("=" * 70)
+    
+    # Load model
+    ensure_model_loaded()
+    
+    # Print activation at layer 15
+    print("\n" + "=" * 70)
+    print("Activation at Layer 15")
+    print("=" * 70)
+    
+    activation, token_strs, token_ids = print_activation_stats(cat_prompt, target_layer=15)
+    
+    # Full logit lens analysis
+    print("\n" + "=" * 70)
+    print("Logit Lens Analysis")
+    print("=" * 70)
+    
+    tokens, results, layer_names = run_example(cat_prompt)
+    
+    print(f"\nNumber of layers: {len(layer_names)}")
+    print(f"\nTop prediction at each layer (for last token '{token_string(tokens[-1])}'):")
+    print(f"{'Layer':<10} {'Top Token':<20} {'Probability':>12}")
+    print("-" * 45)
+    
+    for i, layer_name in enumerate(layer_names):
+        last_pos = len(tokens) - 1
+        top_token_idx = results['argmaxes'][i][last_pos]
+        top_prob = results['probs'][i][last_pos, top_token_idx]
+        print(f"{layer_name:<10} {token_string(top_token_idx):<20} {top_prob:>12.4f}")
+
+
+def run_edgar_experiment(num_samples=NUM_SAMPLES, question_types=None, quick_test=False):
+    """
+    Run the EDGAR corpus shuffled vs unshuffled experiment.
+    
+    Args:
+        num_samples: Number of samples to test
+        question_types: List of question types (None = all)
+        quick_test: If True, only test 5 samples with 2 question types
+    """
+    # ANSI colors for pretty output
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BOLD = '\033[1m'
+    END = '\033[0m'
+    
+    print("\n" + "=" * 80)
+    print(f"{BOLD}{CYAN}EDGAR CORPUS: SHUFFLED VS UNSHUFFLED CONTEXT EXPERIMENT{END}")
+    print("=" * 80)
+    print(f"\nModel: {BOLD}{MODEL_NAME}{END}")
+    print(f"Reference: {CYAN}https://dualroute.baulab.info/{END}")
+    print()
+    
+    # Quick test mode for debugging
+    if quick_test:
+        num_samples = 5
+        question_types = ['company_purpose', 'state_of_incorporation']
+        print(f"{YELLOW}Quick test mode: {num_samples} samples, {len(question_types)} question types{END}")
+    
+    # Load model
+    print(f"\n{BOLD}Step 1: Loading model...{END}")
+    ensure_model_loaded()
+    
+    # Load EDGAR corpus
+    print(f"\n{BOLD}Step 2: Loading EDGAR corpus...{END}")
+    samples = load_edgar_corpus(num_samples=num_samples)
+    
+    if len(samples) == 0:
+        print(f"{YELLOW}Warning: No samples loaded. Check your HuggingFace authentication.{END}")
+        return
+    
+    # Run experiment
+    print(f"\n{BOLD}Step 3: Running experiments...{END}")
+    results = run_full_experiment(
+        samples, 
+        question_types=question_types,
+        shuffle_modes=['none', 'sentences']
+    )
+    
+    # Print results
+    print(f"\n{BOLD}Step 4: Analyzing results...{END}")
+    print_experiment_results(results)
+    
+    # Save results
+    print(f"\n{BOLD}Step 5: Saving results...{END}")
+    save_results(results)
+    
+    print("\n" + "=" * 80)
+    print(f"{BOLD}{GREEN}EXPERIMENT COMPLETE{END}")
+    print("=" * 80)
+    print(f"\nNext steps:")
+    print(f"  1. Review the results JSON file for detailed analysis")
+    print(f"  2. Identify questions with >50% accuracy on unshuffled context")
+    print(f"  3. Compare accuracy between shuffled and unshuffled")
+    print(f"  4. Analyze top token predictions to understand model reasoning")
+    print()
+    
+    return results
+
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="EDGAR Corpus Shuffled vs Unshuffled Experiment")
+    parser.add_argument('--demo', action='store_true', help='Run demo mode with cat prompt')
+    parser.add_argument('--quick', action='store_true', help='Quick test with 5 samples')
+    parser.add_argument('--samples', type=int, default=NUM_SAMPLES, help=f'Number of samples (default: {NUM_SAMPLES})')
+    parser.add_argument('--questions', nargs='+', choices=list(QUESTION_TEMPLATES.keys()),
+                        help='Question types to test')
+    
+    args = parser.parse_args()
+    
+    if args.demo:
+        run_demo_mode()
+    else:
+        run_edgar_experiment(
+            num_samples=args.samples,
+            question_types=args.questions,
+            quick_test=args.quick
+        )
+    
+    print("\n" + "=" * 70)
+    print("DONE")
+    print("=" * 70)
+

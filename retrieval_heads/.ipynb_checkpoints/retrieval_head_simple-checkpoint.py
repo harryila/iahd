@@ -99,21 +99,20 @@ STATE_ALIASES = {
 # =============================================================================
 
 def load_ground_truth():
-    """Load ground truth from the verified CSV."""
+    """Load ground truth from CSV."""
     gt_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
-                           "edgar_gt_verified_slim.csv")
+                           "gt_extract", "edgar_ground_truth_llm.csv")
     if os.path.exists(gt_path):
         df = pd.read_csv(gt_path)
         gt_dict = {}
         for _, row in df.iterrows():
             filename = row['filename']
-            # Column name in verified CSV is 'original_Inc_state_truth'
-            state = row.get('original_Inc_state_truth', None)
-            if pd.notna(state) and state and str(state).upper() not in ['NULL', 'NAN', 'NONE', '']:
+            state = row.get('state_of_incorporation', None)
+            if pd.notna(state) and state and str(state).lower() not in ['nan', 'none', '']:
                 gt_dict[filename] = str(state).strip()
-        print(f"Loaded ground truth for {len(gt_dict)} files from edgar_gt_verified_slim.csv")
+        print(f"Loaded ground truth for {len(gt_dict)} files")
         return gt_dict
-    print(f"Warning: Ground truth file not found at {gt_path}")
+    print("Warning: Ground truth CSV not found")
     return {}
 
 # =============================================================================

@@ -1,0 +1,390 @@
+{
+  "model": "llama",
+  "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+  "context": "short",
+  "num_samples": 50,
+  "top_retrieval_heads": [
+    [
+      "L18H22",
+      0.50473876953125
+    ],
+    [
+      "L17H24",
+      0.5032418823242187
+    ],
+    [
+      "L14H2",
+      0.49078125
+    ],
+    [
+      "L0H13",
+      0.4801123046875
+    ],
+    [
+      "L18H16",
+      0.463809814453125
+    ],
+    [
+      "L13H3",
+      0.4462060546875
+    ],
+    [
+      "L0H22",
+      0.438841552734375
+    ],
+    [
+      "L0H11",
+      0.422333984375
+    ],
+    [
+      "L0H21",
+      0.41818359375
+    ],
+    [
+      "L0H15",
+      0.393251953125
+    ],
+    [
+      "L0H12",
+      0.38770263671875
+    ],
+    [
+      "L0H8",
+      0.3736083984375
+    ],
+    [
+      "L23H14",
+      0.3712274169921875
+    ],
+    [
+      "L22H13",
+      0.3491937255859375
+    ],
+    [
+      "L18H20",
+      0.3294964599609375
+    ],
+    [
+      "L0H28",
+      0.319775390625
+    ],
+    [
+      "L17H23",
+      0.30841064453125
+    ],
+    [
+      "L14H1",
+      0.300146484375
+    ],
+    [
+      "L0H19",
+      0.299208984375
+    ],
+    [
+      "L0H23",
+      0.29746826171875
+    ]
+  ],
+  "results": [
+    {
+      "filename": "92116_1993.txt",
+      "raw_answer": "4342\n```python\ndef",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "103730_1993.txt",
+      "raw_answer": "1,441\n0\n1",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "100240_1993.txt",
+      "raw_answer": "UNKNOWN  # I couldn't find",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 127
+    },
+    {
+      "filename": "58696_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 77
+    },
+    {
+      "filename": "46207_1993.txt",
+      "raw_answer": "24,672\nCorrected Answer",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "60041_1993.txt",
+      "raw_answer": "3,116\n3,116",
+      "normalized_answer": null,
+      "context_tokens": 140
+    },
+    {
+      "filename": "55387_1993.txt",
+      "raw_answer": "1\n```python\n# Define",
+      "normalized_answer": null,
+      "context_tokens": 153
+    },
+    {
+      "filename": "40878_1993.txt",
+      "raw_answer": "1\n-1-  (",
+      "normalized_answer": null,
+      "context_tokens": 40
+    },
+    {
+      "filename": "53540_1993.txt",
+      "raw_answer": "785\n- 2 -",
+      "normalized_answer": null,
+      "context_tokens": 109
+    },
+    {
+      "filename": "800287_1993.txt",
+      "raw_answer": "5107\n- - - -",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "725625_1993.txt",
+      "raw_answer": "575\n-1\n0",
+      "normalized_answer": null,
+      "context_tokens": 197
+    },
+    {
+      "filename": "66479_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 78
+    },
+    {
+      "filename": "700674_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "854094_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 55
+    },
+    {
+      "filename": "846972_1993.txt",
+      "raw_answer": "UNKNOWN.  The text does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "59478_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 85
+    },
+    {
+      "filename": "5550_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "22767_1993.txt",
+      "raw_answer": "1\n- 1 is the",
+      "normalized_answer": null,
+      "context_tokens": 163
+    },
+    {
+      "filename": "738339_1993.txt",
+      "raw_answer": "585\n- 585 is the",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "29854_1993.txt",
+      "raw_answer": "806\n-1-1-",
+      "normalized_answer": null,
+      "context_tokens": 78
+    },
+    {
+      "filename": "97210_1993.txt",
+      "raw_answer": "3,225\n-3,",
+      "normalized_answer": null,
+      "context_tokens": 150
+    },
+    {
+      "filename": "7383_1993.txt",
+      "raw_answer": "1,000,000\n-",
+      "normalized_answer": null,
+      "context_tokens": 60
+    },
+    {
+      "filename": "80661_1993.txt",
+      "raw_answer": "4849\n- - - -",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "711404_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "75042_1993.txt",
+      "raw_answer": "2081\n- - - -",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "18497_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "33565_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 73
+    },
+    {
+      "filename": "745287_1993.txt",
+      "raw_answer": "881\n- - - - -",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "93469_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 63
+    },
+    {
+      "filename": "354869_1993.txt",
+      "raw_answer": "6673\n- - - -",
+      "normalized_answer": null,
+      "context_tokens": 93
+    },
+    {
+      "filename": "36966_1993.txt",
+      "raw_answer": "7893\n7,893 is",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "799036_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "25890_1993.txt",
+      "raw_answer": "6,163\n6,163",
+      "normalized_answer": null,
+      "context_tokens": 114
+    },
+    {
+      "filename": "764764_1993.txt",
+      "raw_answer": "1\n-1\n0",
+      "normalized_answer": null,
+      "context_tokens": 60
+    },
+    {
+      "filename": "717605_1993.txt",
+      "raw_answer": "2294\n- 2,",
+      "normalized_answer": null,
+      "context_tokens": 162
+    },
+    {
+      "filename": "92487_1993.txt",
+      "raw_answer": "1\nExplanation:\nThe excerpt states",
+      "normalized_answer": null,
+      "context_tokens": 47
+    },
+    {
+      "filename": "79166_1993.txt",
+      "raw_answer": "638\n- - - - -",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "355883_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 76
+    },
+    {
+      "filename": "865227_1993.txt",
+      "raw_answer": "1\nExplanation:\nThe excerpt states",
+      "normalized_answer": null,
+      "context_tokens": 95
+    },
+    {
+      "filename": "101320_1993.txt",
+      "raw_answer": "20,636\n20,636",
+      "normalized_answer": null,
+      "context_tokens": 142
+    },
+    {
+      "filename": "64605_1993.txt",
+      "raw_answer": "1746\n```python\n#",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "884033_1993.txt",
+      "raw_answer": "7\n```python\n# Define",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "17797_1993.txt",
+      "raw_answer": "UNKNOWN.  The number of holders",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "216228_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "791445_1993.txt",
+      "raw_answer": "1\n-1\n0",
+      "normalized_answer": null,
+      "context_tokens": 84
+    },
+    {
+      "filename": "719264_1993.txt",
+      "raw_answer": "617\n- 1: The",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "92050_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "788043_1993.txt",
+      "raw_answer": "1837\n- 1837",
+      "normalized_answer": null,
+      "context_tokens": 200
+    },
+    {
+      "filename": "29989_1993.txt",
+      "raw_answer": "UNKNOWN.  The excerpt does not",
+      "normalized_answer": "UNKNOWN",
+      "context_tokens": 200
+    },
+    {
+      "filename": "702163_1993.txt",
+      "raw_answer": "4311\n```python\n#",
+      "normalized_answer": null,
+      "context_tokens": 171
+    }
+  ]
+}
