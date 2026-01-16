@@ -1,0 +1,76 @@
+{
+  "model": "llama31",
+  "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+  "needle_position": 0.5,
+  "shuffle_needle": true,
+  "max_context_tested": 100000,
+  "status": "PARTIAL - 100K had OOM errors (only 10/30 samples), missing 128K/130K completely",
+  "results_by_length": {
+    "200": {
+      "accuracy": 0.6,
+      "correct": 18,
+      "total": 30
+    },
+    "500": {
+      "accuracy": 0.667,
+      "correct": 20,
+      "total": 30
+    },
+    "1000": {
+      "accuracy": 0.667,
+      "correct": 20,
+      "total": 30
+    },
+    "2000": {
+      "accuracy": 0.5329999999999999,
+      "correct": 16,
+      "total": 30
+    },
+    "4000": {
+      "accuracy": 0.467,
+      "correct": 14,
+      "total": 30
+    },
+    "8000": {
+      "accuracy": 0.633,
+      "correct": 19,
+      "total": 30
+    },
+    "10000": {
+      "accuracy": 0.6,
+      "correct": 18,
+      "total": 30
+    },
+    "15000": {
+      "accuracy": 0.6,
+      "correct": 18,
+      "total": 30
+    },
+    "20000": {
+      "accuracy": 0.667,
+      "correct": 20,
+      "total": 30
+    },
+    "30000": {
+      "accuracy": 0.5,
+      "correct": 15,
+      "total": 30
+    },
+    "50000": {
+      "accuracy": 0.5670000000000001,
+      "correct": 17,
+      "total": 30
+    },
+    "75000": {
+      "accuracy": 0.433,
+      "correct": 13,
+      "total": 30
+    },
+    "100000": {
+      "accuracy": 0.33299999999999996,
+      "correct": 10,
+      "total": 30
+    }
+  },
+  "detailed_results": {}
+}

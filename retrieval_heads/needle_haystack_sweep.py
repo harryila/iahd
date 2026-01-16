@@ -1,18 +1,30 @@
 # -*- coding: utf-8 -*-
 """
-Needle in Haystack Context Length Sweep
+Needle in Haystack Context Length Sweep - FULL SECTION 1 VERSION
 
 This script tests at what context length the model fails to retrieve
-a simple fact (state of incorporation) when surrounded by irrelevant
-"haystack" content from Project Gutenberg.
+a simple fact (state of incorporation) when the answer is buried in
+a large chunk of text (entire Section 1) surrounded by irrelevant
+"haystack" content from Alice in Wonderland.
+
+REPLICATING ANANYA'S APPROACH:
+- Needle = ENTIRE Section 1 (hundreds of tokens with answer buried inside)
+- NOT just one sentence - makes it harder!
+- The state is mentioned somewhere within Section 1
+- Model must process all of Section 1 to find the answer
 
 Goal: Find the context length threshold where retrieval breaks down.
 
 Methodology:
-1. Use Project Gutenberg text (Alice in Wonderland) as irrelevant padding
-2. Embed the SEC fact (needle) at various positions in the haystack
-3. Sweep context lengths: 200, 500, 1000, 2000, 4000, 8000 tokens
+1. Use Alice in Wonderland as irrelevant padding (haystack)
+2. Embed entire Section 1 (needle) at position 0.5 (middle of haystack)
+3. Sweep context lengths: 200, 500, 1K, 2K, 4K, 8K, 10K, 12K, 15K tokens
 4. Measure accuracy at each length to find failure point
+
+Expected Results (based on Ananya's findings):
+- Short contexts (< 4K): ~80%+ accuracy
+- Around 10K tokens: Dramatic degradation begins
+- 15K tokens: Near-zero accuracy
 """
 
 import os
@@ -37,12 +49,13 @@ np.random.seed(RANDOM_SEED)
 torch.manual_seed(RANDOM_SEED)
 
 MODELS = {
-    "llama": "meta-llama/Llama-3.1-8B-Instruct",
+    "llama": "meta-llama/Meta-Llama-3-8B-Instruct",  # Llama 3 (same as Ananya)
+    "llama31": "meta-llama/Llama-3.1-8B-Instruct",   # Llama 3.1 (better long-context)
     "qwen": "Qwen/Qwen2.5-7B-Instruct",
 }
 
-# Context lengths to sweep
-CONTEXT_LENGTHS = [200, 500, 1000, 2000, 4000, 8000]
+# Context lengths to sweep (extended to 50K for Llama 3.1 testing)
+CONTEXT_LENGTHS = [200, 500, 1000, 2000, 4000, 8000, 10000, 15000, 20000, 30000, 50000]
 
 # Needle positions to test (where in the haystack is the fact placed)
 # 0.0 = beginning, 0.5 = middle, 1.0 = end
@@ -164,28 +177,25 @@ def load_edgar_samples(num_samples, ground_truth):
 # NEEDLE IN HAYSTACK CONSTRUCTION
 # =============================================================================
 
-def extract_needle_sentence(section_1: str, state: str) -> str:
+def extract_needle_full_section(section_1: str, state: str, shuffle: bool = False) -> str:
     """
-    Extract just the sentence containing the state of incorporation.
-    This is our "needle" - the fact we want the model to find.
+    Return the ENTIRE Section 1 as the needle (like Ananya's approach).
+    This makes the task harder - the answer is buried somewhere in Section 1,
+    not in an obvious single sentence.
+    
+    The model must process all of Section 1 to find where the state is mentioned.
+    
+    If shuffle=True, shuffle the words in the section (destroys word order but keeps all words).
     """
-    # Look for common patterns
-    import re
+    text = section_1.strip()
     
-    state_lower = state.lower()
-    lines = section_1.split('.')
+    if shuffle:
+        import random
+        words = text.split()
+        random.shuffle(words)
+        text = ' '.join(words)
     
-    for line in lines:
-        if state_lower in line.lower() and ('incorporat' in line.lower() or 'organized' in line.lower()):
-            return line.strip() + '.'
-    
-    # Fallback: just use first 200 chars that mention the state
-    for line in lines:
-        if state_lower in line.lower():
-            return line.strip() + '.'
-    
-    # Last resort: create a synthetic needle
-    return f"The company was incorporated in the State of {state}."
+    return text
 
 def create_needle_in_haystack(
     needle: str,
@@ -302,7 +312,8 @@ def run_context_length_sweep(
     samples: list,
     context_lengths: list = CONTEXT_LENGTHS,
     needle_position: float = 0.5,
-    save_dir: str = "."
+    save_dir: str = ".",
+    shuffle_needle: bool = False
 ) -> dict:
     """
     Run the context length sweep experiment.
@@ -325,10 +336,11 @@ def run_context_length_sweep(
         correct = 0
         
         for sample in tqdm(samples, desc=f"{ctx_len} tokens"):
-            # Extract the needle (fact about incorporation)
-            needle = extract_needle_sentence(
+            # Extract the needle (ENTIRE Section 1, not just one sentence)
+            needle = extract_needle_full_section(
                 sample['section_1'], 
-                sample['ground_truth_state']
+                sample['ground_truth_state'],
+                shuffle=shuffle_needle
             )
             
             # Create context with needle in haystack
@@ -374,10 +386,12 @@ def run_context_length_sweep(
         print(f"Accuracy at {ctx_len} tokens: {accuracy:.1%} ({correct}/{len(results)})")
     
     # Save results
+    shuffle_label = "_shuffled" if shuffle_needle else ""
     output = {
         'model': model_key,
         'model_name': model_name,
         'needle_position': needle_position,
+        'shuffle_needle': shuffle_needle,
         'results_by_length': {
             str(k): {key: val for key, val in v.items() if key != 'results'}
             for k, v in results_by_length.items()
@@ -387,7 +401,11 @@ def run_context_length_sweep(
         },
     }
     
-    output_path = os.path.join(save_dir, f"{model_key}_context_sweep.json")
+    # Find next available filename (incremental)
+    i = 0
+    while os.path.exists(os.path.join(save_dir, f"{model_key}_context_sweep{shuffle_label}_{i}.json")):
+        i += 1
+    output_path = os.path.join(save_dir, f"{model_key}_context_sweep{shuffle_label}_{i}.json")
     with open(output_path, 'w') as f:
         json.dump(output, f, indent=2)
     
@@ -425,7 +443,7 @@ def run_position_sweep(
         correct = 0
         
         for sample in tqdm(samples, desc=f"Position {position:.0%}"):
-            needle = extract_needle_sentence(
+            needle = extract_needle_full_section(
                 sample['section_1'],
                 sample['ground_truth_state']
             )
@@ -548,9 +566,14 @@ def plot_context_sweep(save_dir: str):
                 break
     
     plt.tight_layout()
-    plt.savefig(os.path.join(save_dir, 'context_length_sweep.png'), dpi=150, bbox_inches='tight')
+    # Find next available filename (incremental)
+    i = 0
+    while os.path.exists(os.path.join(save_dir, f'context_length_sweep_{i}.png')):
+        i += 1
+    png_path = os.path.join(save_dir, f'context_length_sweep_{i}.png')
+    plt.savefig(png_path, dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"\nSaved: {save_dir}/context_length_sweep.png")
+    print(f"\nSaved: {png_path}")
 
 # =============================================================================
 # MAIN
@@ -560,10 +583,11 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="Needle in Haystack Sweep")
-    parser.add_argument('--model', type=str, choices=['llama', 'qwen', 'all'], default='all')
+    parser.add_argument('--model', type=str, choices=['llama', 'llama31', 'qwen', 'all'], default='all')
     parser.add_argument('--samples', type=int, default=NUM_SAMPLES)
     parser.add_argument('--sweep', type=str, choices=['length', 'position', 'both'], default='length')
     parser.add_argument('--visualize-only', action='store_true')
+    parser.add_argument('--shuffle', action='store_true', help='Shuffle words in the needle (Section 1)')
     
     args = parser.parse_args()
     
@@ -581,7 +605,7 @@ def main():
     
     for model_key in models_to_run:
         if args.sweep in ['length', 'both']:
-            run_context_length_sweep(model_key, samples, save_dir=save_dir)
+            run_context_length_sweep(model_key, samples, save_dir=save_dir, shuffle_needle=args.shuffle)
         
         if args.sweep in ['position', 'both']:
             run_position_sweep(model_key, samples, save_dir=save_dir)
