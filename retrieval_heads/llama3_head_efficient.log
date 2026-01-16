@@ -1,0 +1,117 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+============================================================
+LLAMA 3 HEAD ANALYSIS - MEMORY EFFICIENT
+============================================================
+
+Loading Llama 3...
+2026-01-16 00:46:53.968244: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-16 00:46:53.980920: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1768524413.994829   71530 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1768524413.999296   71530 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1768524414.010865   71530 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768524414.010890   71530 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768524414.010894   71530 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768524414.010895   71530 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-01-16 00:46:54.014671: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.11it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.06it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.05it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.35it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.23it/s]
+Model on cuda:0
+Loaded ground truth for 164 files from edgar_gt_verified_slim.csv
+Loaded 10 samples
+Loaded 10 samples
+
+============================================================
+Context: 2000 tokens, Shuffle: False
+============================================================
+2000tk:   0%|          | 0/10 [00:00<?, ?it/s]2000tk:  10%|█         | 1/10 [00:00<00:07,  1.22it/s]2000tk:  20%|██        | 2/10 [00:01<00:06,  1.32it/s]
+OOM at sample 2, skipping...
+2000tk:  30%|███       | 3/10 [00:02<00:05,  1.23it/s]
+OOM at sample 3, skipping...
+2000tk:  40%|████      | 4/10 [00:03<00:04,  1.28it/s]2000tk:  50%|█████     | 5/10 [00:03<00:03,  1.46it/s]2000tk:  60%|██████    | 6/10 [00:04<00:02,  1.71it/s]
+OOM at sample 6, skipping...
+2000tk:  70%|███████   | 7/10 [00:04<00:01,  1.77it/s]2000tk:  80%|████████  | 8/10 [00:05<00:01,  1.43it/s]2000tk:  90%|█████████ | 9/10 [00:06<00:00,  1.35it/s]2000tk: 100%|██████████| 10/10 [00:07<00:00,  1.33it/s]2000tk: 100%|██████████| 10/10 [00:07<00:00,  1.40it/s]
+
+short_unshuffled Top 5 heads:
+  1. L0H30: 0.3278
+  2. L0H28: 0.3027
+  3. L0H29: 0.2832
+  4. L0H22: 0.2829
+  5. L0H21: 0.2440
+
+============================================================
+Context: 2000 tokens, Shuffle: True
+============================================================
+2000tk:   0%|          | 0/10 [00:00<?, ?it/s]2000tk:  10%|█         | 1/10 [00:00<00:04,  2.04it/s]2000tk:  20%|██        | 2/10 [00:01<00:04,  1.61it/s]
+OOM at sample 2, skipping...
+2000tk:  30%|███       | 3/10 [00:02<00:05,  1.39it/s]
+OOM at sample 3, skipping...
+2000tk:  40%|████      | 4/10 [00:02<00:04,  1.39it/s]2000tk:  50%|█████     | 5/10 [00:03<00:03,  1.56it/s]2000tk:  60%|██████    | 6/10 [00:03<00:02,  1.77it/s]
+OOM at sample 6, skipping...
+2000tk:  70%|███████   | 7/10 [00:04<00:01,  1.80it/s]2000tk:  80%|████████  | 8/10 [00:05<00:01,  1.49it/s]2000tk:  90%|█████████ | 9/10 [00:05<00:00,  1.42it/s]2000tk: 100%|██████████| 10/10 [00:06<00:00,  1.42it/s]2000tk: 100%|██████████| 10/10 [00:06<00:00,  1.51it/s]
+
+short_shuffled Top 5 heads:
+  1. L18H20: 0.3499
+  2. L17H24: 0.3331
+  3. L0H30: 0.3295
+  4. L0H29: 0.3232
+  5. L16H0: 0.3089
+
+============================================================
+Context: 8000 tokens, Shuffle: False
+============================================================
+8000tk:   0%|          | 0/10 [00:00<?, ?it/s]
+OOM at sample 0, skipping...
+8000tk:  10%|█         | 1/10 [00:00<00:07,  1.14it/s]
+OOM at sample 1, skipping...
+8000tk:  20%|██        | 2/10 [00:01<00:07,  1.08it/s]
+OOM at sample 2, skipping...
+8000tk:  30%|███       | 3/10 [00:02<00:06,  1.12it/s]
+OOM at sample 3, skipping...
+8000tk:  40%|████      | 4/10 [00:03<00:04,  1.22it/s]
+OOM at sample 4, skipping...
+8000tk:  50%|█████     | 5/10 [00:04<00:04,  1.20it/s]
+OOM at sample 5, skipping...
+8000tk:  60%|██████    | 6/10 [00:05<00:03,  1.18it/s]
+OOM at sample 6, skipping...
+8000tk:  70%|███████   | 7/10 [00:05<00:02,  1.36it/s]
+OOM at sample 7, skipping...
+8000tk:  80%|████████  | 8/10 [00:06<00:01,  1.26it/s]
+OOM at sample 8, skipping...
+8000tk:  90%|█████████ | 9/10 [00:07<00:00,  1.23it/s]
+OOM at sample 9, skipping...
+8000tk: 100%|██████████| 10/10 [00:08<00:00,  1.17it/s]8000tk: 100%|██████████| 10/10 [00:08<00:00,  1.20it/s]
+
+============================================================
+Context: 8000 tokens, Shuffle: True
+============================================================
+8000tk:   0%|          | 0/10 [00:00<?, ?it/s]
+OOM at sample 0, skipping...
+8000tk:  10%|█         | 1/10 [00:00<00:08,  1.03it/s]
+OOM at sample 1, skipping...
+8000tk:  20%|██        | 2/10 [00:01<00:07,  1.04it/s]
+OOM at sample 2, skipping...
+8000tk:  30%|███       | 3/10 [00:02<00:06,  1.13it/s]
+OOM at sample 3, skipping...
+8000tk:  40%|████      | 4/10 [00:03<00:04,  1.28it/s]
+OOM at sample 4, skipping...
+8000tk:  50%|█████     | 5/10 [00:04<00:04,  1.18it/s]
+OOM at sample 5, skipping...
+8000tk:  60%|██████    | 6/10 [00:05<00:03,  1.17it/s]
+OOM at sample 6, skipping...
+8000tk:  70%|███████   | 7/10 [00:05<00:02,  1.37it/s]
+OOM at sample 7, skipping...
+8000tk:  80%|████████  | 8/10 [00:06<00:01,  1.30it/s]
+OOM at sample 8, skipping...
+8000tk:  90%|█████████ | 9/10 [00:07<00:00,  1.25it/s]
+OOM at sample 9, skipping...
+8000tk: 100%|██████████| 10/10 [00:08<00:00,  1.22it/s]8000tk: 100%|██████████| 10/10 [00:08<00:00,  1.22it/s]
+
+Saved: llama3_results/head/head_analysis_efficient.json
+
+============================================================
+SUMMARY
+============================================================
+short_unshuffled: mean layer = 5.4, top = L0H30
+short_shuffled: mean layer = 12.1, top = L18H20

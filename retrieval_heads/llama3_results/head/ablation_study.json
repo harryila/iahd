@@ -1,0 +1,50 @@
+{
+  "baseline": {
+    "unshuffled": {
+      "accuracy": 0.6,
+      "correct": 18,
+      "total": 30
+    },
+    "shuffled": {
+      "accuracy": 0.43333333333333335,
+      "correct": 13,
+      "total": 30
+    }
+  },
+  "ablate_L16H1": {
+    "unshuffled": {
+      "accuracy": 0.6,
+      "correct": 18,
+      "total": 30
+    },
+    "shuffled": {
+      "accuracy": 0.4666666666666667,
+      "correct": 14,
+      "total": 30
+    }
+  },
+  "ablate_L17H24": {
+    "unshuffled": {
+      "accuracy": 0.6,
+      "correct": 18,
+      "total": 30
+    },
+    "shuffled": {
+      "accuracy": 0.5,
+      "correct": 15,
+      "total": 30
+    }
+  },
+  "ablate_L2H21": {
+    "unshuffled": {
+      "accuracy": 0.6333333333333333,
+      "correct": 19,
+      "total": 30
+    },
+    "shuffled": {
+      "accuracy": 0.4,
+      "correct": 12,
+      "total": 30
+    }
+  }
+}

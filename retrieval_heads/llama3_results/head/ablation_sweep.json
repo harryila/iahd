@@ -1,0 +1,102 @@
+{
+  "unshuffled": [
+    {
+      "num_ablated": 0,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 1,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 2,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 3,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 5,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 10,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 15,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 20,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 25,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 30,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 40,
+      "accuracy": 0.6
+    },
+    {
+      "num_ablated": 50,
+      "accuracy": 0.6
+    }
+  ],
+  "shuffled": [
+    {
+      "num_ablated": 0,
+      "accuracy": 0.43333333333333335
+    },
+    {
+      "num_ablated": 1,
+      "accuracy": 0.4666666666666667
+    },
+    {
+      "num_ablated": 2,
+      "accuracy": 0.5
+    },
+    {
+      "num_ablated": 3,
+      "accuracy": 0.4
+    },
+    {
+      "num_ablated": 5,
+      "accuracy": 0.43333333333333335
+    },
+    {
+      "num_ablated": 10,
+      "accuracy": 0.36666666666666664
+    },
+    {
+      "num_ablated": 15,
+      "accuracy": 0.43333333333333335
+    },
+    {
+      "num_ablated": 20,
+      "accuracy": 0.3333333333333333
+    },
+    {
+      "num_ablated": 25,
+      "accuracy": 0.4666666666666667
+    },
+    {
+      "num_ablated": 30,
+      "accuracy": 0.3333333333333333
+    },
+    {
+      "num_ablated": 40,
+      "accuracy": 0.43333333333333335
+    },
+    {
+      "num_ablated": 50,
+      "accuracy": 0.36666666666666664
+    }
+  ]
+}

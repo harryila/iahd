@@ -1,0 +1,59 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+============================================================
+LLAMA 3 RETRIEVAL HEAD ANALYSIS (SURGICAL - NO OOM)
+============================================================
+
+Loading Llama 3...
+2026-01-16 00:16:28.875133: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-16 00:16:28.887741: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1768522588.901670   62873 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1768522588.906145   62873 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1768522588.917654   62873 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768522588.917688   62873 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768522588.917694   62873 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768522588.917696   62873 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-01-16 00:16:28.921477: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.12it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.07it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.06it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.36it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.24it/s]
+Model loaded on cuda:0
+
+Loading samples...
+Loaded ground truth for 164 files from edgar_gt_verified_slim.csv
+Loaded 15 samples
+Loaded 15 samples
+
+============================================================
+Identifying heads at 2000 tokens, shuffle=False
+============================================================
+2000tk norm:   0%|          | 0/15 [00:00<?, ?it/s]`torch.nn.functional.scaled_dot_product_attention` does not support `output_attentions=True`. Falling back to eager attention. This warning can be removed using the argument `attn_implementation="eager"` when loading the model.
+2000tk norm:   7%|▋         | 1/15 [00:09<02:16,  9.74s/it]2000tk norm:  13%|█▎        | 2/15 [00:20<02:16, 10.53s/it]2000tk norm:  20%|██        | 3/15 [00:40<02:57, 14.77s/it]Error: CUDA out of memory. Tried to allocate 40.54 GiB. GPU 0 has a total capacity of 79.19 GiB of which 1.55 GiB is free. Including non-PyTorch memory, this process has 77.63 GiB memory in use. Of the allocated memory 76.59 GiB is allocated by PyTorch, and 387.13 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2000tk norm:  27%|██▋       | 4/15 [00:41<01:41,  9.18s/it]2000tk norm:  33%|███▎      | 5/15 [00:50<01:32,  9.29s/it]2000tk norm:  40%|████      | 6/15 [00:59<01:21,  9.07s/it]Error: CUDA out of memory. Tried to allocate 26.79 GiB. GPU 0 has a total capacity of 79.19 GiB of which 22.40 GiB is free. Including non-PyTorch memory, this process has 56.78 GiB memory in use. Of the allocated memory 55.82 GiB is allocated by PyTorch, and 304.41 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2000tk norm:  47%|████▋     | 7/15 [00:59<00:50,  6.26s/it]2000tk norm:  53%|█████▎    | 8/15 [01:12<00:58,  8.31s/it]2000tk norm:  60%|██████    | 9/15 [01:24<00:56,  9.35s/it]2000tk norm:  67%|██████▋   | 10/15 [01:35<00:49,  9.99s/it]2000tk norm:  73%|███████▎  | 11/15 [01:45<00:39,  9.99s/it]2000tk norm:  80%|████████  | 12/15 [01:57<00:31, 10.44s/it]2000tk norm:  87%|████████▋ | 13/15 [02:14<00:24, 12.47s/it]2000tk norm:  93%|█████████▎| 14/15 [02:31<00:13, 13.98s/it]2000tk norm: 100%|██████████| 15/15 [02:49<00:00, 15.02s/it]2000tk norm: 100%|██████████| 15/15 [02:49<00:00, 11.27s/it]
+
+SHORT_UNSHUFFLED Top 5 heads:
+  1. L16H1: 0.5644
+  2. L17H24: 0.5559
+  3. L17H26: 0.4773
+  4. L24H27: 0.4485
+  5. L20H1: 0.4199
+
+============================================================
+Identifying heads at 2000 tokens, shuffle=True
+============================================================
+2000tk shuf:   0%|          | 0/15 [00:00<?, ?it/s]2000tk shuf:   7%|▋         | 1/15 [00:13<03:06, 13.32s/it]2000tk shuf:  13%|█▎        | 2/15 [00:26<02:55, 13.48s/it]2000tk shuf:  20%|██        | 3/15 [00:53<03:54, 19.55s/it]Error: CUDA out of memory. Tried to allocate 40.35 GiB. GPU 0 has a total capacity of 79.19 GiB of which 26.39 GiB is free. Including non-PyTorch memory, this process has 36.97 GiB memory in use. Process 63537 has 15.88 GiB memory in use. Of the allocated memory 35.95 GiB is allocated by PyTorch, and 376.48 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2000tk shuf:  27%|██▋       | 4/15 [00:55<02:16, 12.42s/it]2000tk shuf:  33%|███▎      | 5/15 [01:07<02:02, 12.21s/it]2000tk shuf:  40%|████      | 6/15 [01:17<01:44, 11.60s/it]Error: CUDA out of memory. Tried to allocate 26.51 GiB. GPU 0 has a total capacity of 79.19 GiB of which 6.90 GiB is free. Including non-PyTorch memory, this process has 56.34 GiB memory in use. Process 63537 has 15.97 GiB memory in use. Of the allocated memory 55.38 GiB is allocated by PyTorch, and 305.15 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2000tk shuf:  47%|████▋     | 7/15 [01:18<01:06,  8.26s/it]2000tk shuf:  53%|█████▎    | 8/15 [01:35<01:15, 10.79s/it]2000tk shuf:  60%|██████    | 9/15 [01:50<01:13, 12.31s/it]2000tk shuf:  67%|██████▋   | 10/15 [02:06<01:06, 13.29s/it]2000tk shuf:  73%|███████▎  | 11/15 [02:19<00:52, 13.23s/it]2000tk shuf:  80%|████████  | 12/15 [02:34<00:41, 13.76s/it]2000tk shuf:  87%|████████▋ | 13/15 [02:54<00:31, 15.72s/it]2000tk shuf:  93%|█████████▎| 14/15 [03:12<00:16, 16.36s/it]2000tk shuf: 100%|██████████| 15/15 [03:30<00:00, 16.89s/it]2000tk shuf: 100%|██████████| 15/15 [03:30<00:00, 14.03s/it]
+
+SHORT_SHUFFLED Top 5 heads:
+  1. L27H27: 0.9685
+  2. L29H13: 0.9617
+  3. L26H24: 0.9602
+  4. L22H26: 0.9601
+  5. L29H6: 0.9588
+
+============================================================
+Identifying heads at 8000 tokens, shuffle=False
+============================================================
+8000tk norm:   0%|          | 0/15 [00:00<?, ?it/s]

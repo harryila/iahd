@@ -1,0 +1,14 @@
+{
+  "baseline": {
+    "unshuffled": 0.6666666666666666,
+    "shuffled": 0.48148148148148145
+  },
+  "ablate_1_unshuf_heads_on_unshuf": 0,
+  "ablate_1_shuf_heads_on_shuf": 0,
+  "ablate_3_unshuf_heads_on_unshuf": 0,
+  "ablate_3_shuf_heads_on_shuf": 0,
+  "ablate_5_unshuf_heads_on_unshuf": 0,
+  "ablate_5_shuf_heads_on_shuf": 0,
+  "ablate_10_unshuf_heads_on_unshuf": 0,
+  "ablate_10_shuf_heads_on_shuf": 0
+}

@@ -1,0 +1,103 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+======================================================================
+LLAMA 3 ABLATION SWEEP
+======================================================================
+Context: 2000 tokens
+Samples: 30
+Max heads to ablate: 50
+
+Loading Llama 3...
+2026-01-16 01:16:43.858004: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-16 01:16:43.870682: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1768526203.884518   79705 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1768526203.889006   79705 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1768526203.900580   79705 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768526203.900605   79705 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768526203.900609   79705 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768526203.900610   79705 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-01-16 01:16:43.904394: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.12it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.07it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.06it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.36it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.24it/s]
+Model loaded
+
+Loading samples...
+Loaded ground truth for 164 files from edgar_gt_verified_slim.csv
+Loaded 30 samples
+Loaded 30 samples
+
+======================================================================
+SWEEP 1: Ablating top COMPREHENSION heads (testing UNSHUFFLED)
+======================================================================
+unshuffled sweep:   0%|          | 0/12 [00:00<?, ?it/s]/home/ubuntu/.local/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:629: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.6` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/home/ubuntu/.local/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:634: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+This is a friendly reminder - the current text generation call will exceed the model's predefined maximum length (8192). Depending on the model, you may observe exceptions, performance degradation, or nothing at all.
+  0 heads ablated: 60.0%
+unshuffled sweep:   8%|▊         | 1/12 [00:13<02:28, 13.50s/it]  1 heads ablated: 60.0%
+unshuffled sweep:  17%|█▋        | 2/12 [00:26<02:13, 13.35s/it]  2 heads ablated: 60.0%
+unshuffled sweep:  25%|██▌       | 3/12 [00:40<01:59, 13.33s/it]  3 heads ablated: 60.0%
+unshuffled sweep:  33%|███▎      | 4/12 [00:53<01:45, 13.23s/it]  5 heads ablated: 60.0%
+unshuffled sweep:  42%|████▏     | 5/12 [01:06<01:32, 13.20s/it]  10 heads ablated: 60.0%
+unshuffled sweep:  50%|█████     | 6/12 [01:19<01:20, 13.35s/it]  15 heads ablated: 60.0%
+unshuffled sweep:  58%|█████▊    | 7/12 [01:33<01:07, 13.52s/it]  20 heads ablated: 60.0%
+unshuffled sweep:  67%|██████▋   | 8/12 [01:47<00:54, 13.63s/it]  25 heads ablated: 60.0%
+unshuffled sweep:  75%|███████▌  | 9/12 [02:01<00:40, 13.57s/it]  30 heads ablated: 60.0%
+unshuffled sweep:  83%|████████▎ | 10/12 [02:14<00:26, 13.39s/it]  40 heads ablated: 60.0%
+unshuffled sweep:  92%|█████████▏| 11/12 [02:27<00:13, 13.34s/it]  50 heads ablated: 60.0%
+unshuffled sweep: 100%|██████████| 12/12 [02:41<00:00, 13.53s/it]unshuffled sweep: 100%|██████████| 12/12 [02:41<00:00, 13.44s/it]
+
+======================================================================
+SWEEP 2: Ablating top KEYWORD-MATCHING heads (testing SHUFFLED)
+======================================================================
+shuffled sweep:   0%|          | 0/12 [00:00<?, ?it/s]  0 heads ablated: 43.3%
+shuffled sweep:   8%|▊         | 1/12 [00:13<02:23, 13.07s/it]  1 heads ablated: 46.7%
+shuffled sweep:  17%|█▋        | 2/12 [00:26<02:12, 13.21s/it]  2 heads ablated: 50.0%
+shuffled sweep:  25%|██▌       | 3/12 [00:39<01:58, 13.14s/it]  3 heads ablated: 40.0%
+shuffled sweep:  33%|███▎      | 4/12 [00:51<01:41, 12.65s/it]  5 heads ablated: 43.3%
+shuffled sweep:  42%|████▏     | 5/12 [01:03<01:27, 12.55s/it]  10 heads ablated: 36.7%
+shuffled sweep:  50%|█████     | 6/12 [01:17<01:17, 12.89s/it]  15 heads ablated: 43.3%
+shuffled sweep:  58%|█████▊    | 7/12 [01:31<01:07, 13.42s/it]  20 heads ablated: 33.3%
+shuffled sweep:  67%|██████▋   | 8/12 [01:45<00:53, 13.40s/it]  25 heads ablated: 46.7%
+shuffled sweep:  75%|███████▌  | 9/12 [01:58<00:39, 13.24s/it]  30 heads ablated: 33.3%
+shuffled sweep:  83%|████████▎ | 10/12 [02:11<00:26, 13.28s/it]  40 heads ablated: 43.3%
+shuffled sweep:  92%|█████████▏| 11/12 [02:26<00:13, 13.90s/it]  50 heads ablated: 36.7%
+shuffled sweep: 100%|██████████| 12/12 [02:43<00:00, 14.65s/it]shuffled sweep: 100%|██████████| 12/12 [02:43<00:00, 13.59s/it]
+
+Saved: llama3_results/head/ablation_sweep.json
+
+Saved plot: llama3_results/head/ablation_sweep.png
+
+======================================================================
+SUMMARY
+======================================================================
+
+Unshuffled (ablating comprehension heads):
+   0 heads: 60.0%
+   1 heads: 60.0%
+   2 heads: 60.0%
+   3 heads: 60.0%
+   5 heads: 60.0%
+  10 heads: 60.0%
+  15 heads: 60.0%
+  20 heads: 60.0%
+  25 heads: 60.0%
+  30 heads: 60.0%
+  40 heads: 60.0%
+  50 heads: 60.0%
+
+Shuffled (ablating keyword-matching heads):
+   0 heads: 43.3%
+   1 heads: 46.7%
+   2 heads: 50.0%
+   3 heads: 40.0%
+   5 heads: 43.3%
+  10 heads: 36.7%
+  15 heads: 43.3%
+  20 heads: 33.3%
+  25 heads: 46.7%
+  30 heads: 33.3%
+  40 heads: 43.3%
+  50 heads: 36.7%

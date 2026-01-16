@@ -1,0 +1,331 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+2026-01-16 01:28:31.281576: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-16 01:28:31.295566: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1768526911.312690   82747 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1768526911.318286   82747 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1768526911.331804   82747 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768526911.331828   82747 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768526911.331832   82747 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768526911.331833   82747 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-01-16 01:28:31.335636: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+======================================================================
+LLAMA 3 ABLATION - CORRECT VERSION
+======================================================================
+Properly zeroing attention weights BEFORE softmax application
+
+Loading Llama 3 (eager attention)...
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.12it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.07it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.07it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.36it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.24it/s]
+Model loaded
+
+Loading samples...
+Loaded ground truth for 164 files from edgar_gt_verified_slim.csv
+Loaded 30 samples
+Loaded 30 samples
+
+======================================================================
+BASELINE (No Ablation)
+======================================================================
+/home/ubuntu/.local/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:629: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.6` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/home/ubuntu/.local/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:634: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+This is a friendly reminder - the current text generation call will exceed the model's predefined maximum length (8192). Depending on the model, you may observe exceptions, performance degradation, or nothing at all.
+Error: CUDA out of memory. Tried to allocate 40.55 GiB. GPU 0 has a total capacity of 79.19 GiB of which 814.50 MiB is free. Including non-PyTorch memory, this process has 78.38 GiB memory in use. Of the allocated memory 77.23 GiB is allocated by PyTorch, and 507.28 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Error: CUDA out of memory. Tried to allocate 26.80 GiB. GPU 0 has a total capacity of 79.19 GiB of which 890.50 MiB is free. Including non-PyTorch memory, this process has 78.31 GiB memory in use. Of the allocated memory 56.24 GiB is allocated by PyTorch, and 21.41 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Error: CUDA out of memory. Tried to allocate 25.38 GiB. GPU 0 has a total capacity of 79.19 GiB of which 888.50 MiB is free. Including non-PyTorch memory, this process has 78.31 GiB memory in use. Of the allocated memory 42.03 GiB is allocated by PyTorch, and 35.62 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Unshuffled: 66.7% (18/27)
+Error: CUDA out of memory. Tried to allocate 40.36 GiB. GPU 0 has a total capacity of 79.19 GiB of which 888.50 MiB is free. Including non-PyTorch memory, this process has 78.31 GiB memory in use. Of the allocated memory 76.93 GiB is allocated by PyTorch, and 734.09 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Error: CUDA out of memory. Tried to allocate 26.51 GiB. GPU 0 has a total capacity of 79.19 GiB of which 888.50 MiB is free. Including non-PyTorch memory, this process has 78.31 GiB memory in use. Of the allocated memory 55.80 GiB is allocated by PyTorch, and 21.85 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Error: CUDA out of memory. Tried to allocate 25.42 GiB. GPU 0 has a total capacity of 79.19 GiB of which 888.50 MiB is free. Including non-PyTorch memory, this process has 78.31 GiB memory in use. Of the allocated memory 42.08 GiB is allocated by PyTorch, and 35.57 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Shuffled: 48.1% (13/27)
+
+======================================================================
+ABLATING TOP 1 HEADS
+======================================================================
+Ablating: [(17, 24)]
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Unshuffled with top unshuffled heads ablated: 0.0% (Δ=-66.7%)
+Ablating: [(2, 21)]
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Shuffled with top shuffled heads ablated: 0.0% (Δ=-48.1%)
+
+======================================================================
+ABLATING TOP 3 HEADS
+======================================================================
+Ablating: [(17, 24), (16, 1), (17, 26)]
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Unshuffled with top unshuffled heads ablated: 0.0% (Δ=-66.7%)
+Ablating: [(2, 21), (2, 22), (2, 23)]
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Shuffled with top shuffled heads ablated: 0.0% (Δ=-48.1%)
+
+======================================================================
+ABLATING TOP 5 HEADS
+======================================================================
+Ablating: [(17, 24), (16, 1), (17, 26), (24, 27), (20, 1)]
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Unshuffled with top unshuffled heads ablated: 0.0% (Δ=-66.7%)
+Ablating: [(2, 21), (2, 22), (2, 23), (2, 25), (2, 12)]
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Shuffled with top shuffled heads ablated: 0.0% (Δ=-48.1%)
+
+======================================================================
+ABLATING TOP 10 HEADS
+======================================================================
+Ablating: [(17, 24), (16, 1), (17, 26), (24, 27), (20, 1), (16, 0), (18, 20), (17, 1), (20, 14), (19, 24)]
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Unshuffled with top unshuffled heads ablated: 0.0% (Δ=-66.7%)
+Ablating: [(2, 21), (2, 22), (2, 23), (2, 25), (2, 12), (2, 27), (2, 20), (2, 24), (2, 26), (2, 28)]
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Error: LlamaAttention.forward() got multiple values for argument 'position_embeddings'
+Shuffled with top shuffled heads ablated: 0.0% (Δ=-48.1%)
+
+Saved: llama3_results/head/ablation_correct.json
+
+======================================================================
+SUMMARY
+======================================================================
+Baseline unshuffled: 66.7%
+Baseline shuffled: 48.1%
+ablate_1_unshuf_heads_on_unshuf: 0.0%
+ablate_1_shuf_heads_on_shuf: 0.0%
+ablate_3_unshuf_heads_on_unshuf: 0.0%
+ablate_3_shuf_heads_on_shuf: 0.0%
+ablate_5_unshuf_heads_on_unshuf: 0.0%
+ablate_5_shuf_heads_on_shuf: 0.0%
+ablate_10_unshuf_heads_on_unshuf: 0.0%
+ablate_10_shuf_heads_on_shuf: 0.0%
