@@ -1,0 +1,451 @@
+2026-01-19 05:16:14.521099: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-19 05:16:14.534248: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1768799774.550191   37648 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1768799774.555872   37648 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1768799774.570060   37648 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768799774.570091   37648 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768799774.570096   37648 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1768799774.570098   37648 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-01-19 05:16:14.573956: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+======================================================================
+LLAMA 3 - CONTEXT ATTENTION SWEEP
+Metric: Sum of attention over ENTIRE Section 1 region
+Attention analysis: ≤4000 tokens only
+======================================================================
+
+Loading Llama 3 on GPU 0...
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:04,  1.54s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:02<00:02,  1.19s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:03<00:01,  1.07s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.28it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.07it/s]
+Model loaded on cuda:0
+Loaded ground truth for 164 files from edgar_gt_verified_slim.csv
+Loaded 30 samples
+Loaded 30 samples
+Haystack: Alice in Wonderland (52659 chars)
+
+Sample filenames (for cross-test verification):
+  1. 92116_1993.txt
+  2. 103730_1993.txt
+  3. 100240_1993.txt
+  4. 46207_1993.txt
+  5. 60041_1993.txt
+  ... and 25 more
+
+======================================================================
+Context Length: 200 tokens
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]/home/ubuntu/.local/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:590: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.6` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/home/ubuntu/.local/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:595: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+  unshuffled:   3%|▎         | 1/30 [00:00<00:27,  1.05it/s]  unshuffled:   7%|▋         | 2/30 [00:01<00:25,  1.08it/s]This is a friendly reminder - the current text generation call will exceed the model's predefined maximum length (8192). Depending on the model, you may observe exceptions, performance degradation, or nothing at all.
+  unshuffled:  10%|█         | 3/30 [00:04<00:45,  1.69s/it]  unshuffled:  13%|█▎        | 4/30 [00:05<00:39,  1.53s/it]  unshuffled:  17%|█▋        | 5/30 [00:06<00:29,  1.19s/it]  unshuffled:  20%|██        | 6/30 [00:06<00:21,  1.12it/s]  unshuffled:  23%|██▎       | 7/30 [00:07<00:18,  1.25it/s]  unshuffled:  27%|██▋       | 8/30 [00:08<00:21,  1.02it/s]  unshuffled:  30%|███       | 9/30 [00:09<00:23,  1.11s/it]  unshuffled:  33%|███▎      | 10/30 [00:11<00:21,  1.08s/it]  unshuffled:  37%|███▋      | 11/30 [00:11<00:19,  1.01s/it]  unshuffled:  40%|████      | 12/30 [00:12<00:17,  1.03it/s]  unshuffled:  43%|████▎     | 13/30 [00:14<00:22,  1.33s/it]  unshuffled:  47%|████▋     | 14/30 [00:16<00:22,  1.41s/it]  unshuffled:  50%|█████     | 15/30 [00:17<00:21,  1.40s/it]  unshuffled:  53%|█████▎    | 16/30 [00:21<00:27,  1.94s/it]  unshuffled:  57%|█████▋    | 17/30 [00:23<00:26,  2.03s/it]  unshuffled:  60%|██████    | 18/30 [00:23<00:19,  1.62s/it]  unshuffled:  63%|██████▎   | 19/30 [00:24<00:14,  1.28s/it]  unshuffled:  67%|██████▋   | 20/30 [00:25<00:11,  1.10s/it]  unshuffled:  70%|███████   | 21/30 [00:25<00:08,  1.12it/s]  unshuffled:  73%|███████▎  | 22/30 [00:27<00:09,  1.17s/it]  unshuffled:  77%|███████▋  | 23/30 [00:29<00:10,  1.57s/it]  unshuffled:  80%|████████  | 24/30 [00:30<00:07,  1.19s/it]  unshuffled:  83%|████████▎ | 25/30 [00:32<00:06,  1.38s/it]  unshuffled:  87%|████████▋ | 26/30 [00:33<00:05,  1.31s/it]  unshuffled:  90%|█████████ | 27/30 [00:35<00:05,  1.75s/it]  unshuffled:  93%|█████████▎| 28/30 [00:36<00:02,  1.27s/it]  unshuffled:  97%|█████████▋| 29/30 [00:37<00:01,  1.20s/it]  unshuffled: 100%|██████████| 30/30 [00:39<00:00,  1.50s/it]  unshuffled: 100%|██████████| 30/30 [00:39<00:00,  1.31s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.28 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.55 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.80 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.54 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.88 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.32 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.79 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.93 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 9.05 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.62 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.11 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 25.38 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.22 GiB. GP
+    Accuracy: 63.3% (19/30)
+    Top 5 heads: ['L0H22', 'L0H28', 'L0H21', 'L17H24', 'L0H30']
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:00<00:16,  1.79it/s]  shuffled:   7%|▋         | 2/30 [00:01<00:21,  1.31it/s]  shuffled:  10%|█         | 3/30 [00:03<00:41,  1.55s/it]  shuffled:  13%|█▎        | 4/30 [00:05<00:35,  1.37s/it]  shuffled:  17%|█▋        | 5/30 [00:05<00:28,  1.14s/it]  shuffled:  20%|██        | 6/30 [00:06<00:20,  1.16it/s]  shuffled:  23%|██▎       | 7/30 [00:06<00:17,  1.31it/s]  shuffled:  27%|██▋       | 8/30 [00:08<00:22,  1.01s/it]  shuffled:  30%|███       | 9/30 [00:09<00:21,  1.00s/it]  shuffled:  33%|███▎      | 10/30 [00:10<00:20,  1.04s/it]  shuffled:  37%|███▋      | 11/30 [00:10<00:17,  1.10it/s]  shuffled:  40%|████      | 12/30 [00:11<00:16,  1.12it/s]  shuffled:  43%|████▎     | 13/30 [00:13<00:20,  1.22s/it]  shuffled:  47%|████▋     | 14/30 [00:15<00:21,  1.34s/it]  shuffled:  50%|█████     | 15/30 [00:16<00:20,  1.37s/it]  shuffled:  53%|█████▎    | 16/30 [00:19<00:26,  1.89s/it]  shuffled:  57%|█████▋    | 17/30 [00:22<00:26,  2.01s/it]  shuffled:  60%|██████    | 18/30 [00:22<00:19,  1.60s/it]  shuffled:  63%|██████▎   | 19/30 [00:23<00:14,  1.34s/it]  shuffled:  67%|██████▋   | 20/30 [00:24<00:11,  1.15s/it]  shuffled:  70%|███████   | 21/30 [00:24<00:08,  1.08it/s]  shuffled:  73%|███████▎  | 22/30 [00:26<00:08,  1.11s/it]  shuffled:  77%|███████▋  | 23/30 [00:28<00:11,  1.58s/it]  shuffled:  80%|████████  | 24/30 [00:29<00:07,  1.19s/it]  shuffled:  83%|████████▎ | 25/30 [00:30<00:06,  1.29s/it]  shuffled:  87%|████████▋ | 26/30 [00:31<00:04,  1.16s/it]  shuffled:  90%|█████████ | 27/30 [00:34<00:04,  1.65s/it]  shuffled:  93%|█████████▎| 28/30 [00:34<00:02,  1.20s/it]  shuffled:  97%|█████████▋| 29/30 [00:35<00:01,  1.21s/it]  shuffled: 100%|██████████| 30/30 [00:37<00:00,  1.49s/it]  shuffled: 100%|██████████| 30/30 [00:37<00:00,  1.26s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.15 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.36 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.51 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.49 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.81 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.25 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.71 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.87 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 8.92 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.59 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.09 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 50.84 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.21 GiB. GP
+    Accuracy: 43.3% (13/30)
+    Top 5 heads: ['L17H24', 'L0H22', 'L0H28', 'L0H21', 'L18H20']
+
+======================================================================
+Context Length: 500 tokens
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]  unshuffled:   3%|▎         | 1/30 [00:00<00:15,  1.93it/s]  unshuffled:   7%|▋         | 2/30 [00:01<00:20,  1.34it/s]  unshuffled:  10%|█         | 3/30 [00:04<00:43,  1.59s/it]  unshuffled:  13%|█▎        | 4/30 [00:05<00:37,  1.44s/it]  unshuffled:  17%|█▋        | 5/30 [00:05<00:28,  1.13s/it]  unshuffled:  20%|██        | 6/30 [00:06<00:20,  1.18it/s]  unshuffled:  23%|██▎       | 7/30 [00:06<00:17,  1.30it/s]  unshuffled:  27%|██▋       | 8/30 [00:08<00:21,  1.04it/s]  unshuffled:  30%|███       | 9/30 [00:09<00:22,  1.09s/it]  unshuffled:  33%|███▎      | 10/30 [00:10<00:21,  1.07s/it]  unshuffled:  37%|███▋      | 11/30 [00:11<00:19,  1.00s/it]  unshuffled:  40%|████      | 12/30 [00:12<00:17,  1.04it/s]  unshuffled:  43%|████▎     | 13/30 [00:14<00:22,  1.32s/it]  unshuffled:  47%|████▋     | 14/30 [00:15<00:22,  1.41s/it]  unshuffled:  50%|█████     | 15/30 [00:17<00:20,  1.40s/it]  unshuffled:  53%|█████▎    | 16/30 [00:20<00:27,  1.94s/it]  unshuffled:  57%|█████▋    | 17/30 [00:22<00:25,  1.98s/it]  unshuffled:  60%|██████    | 18/30 [00:23<00:19,  1.59s/it]  unshuffled:  63%|██████▎   | 19/30 [00:23<00:13,  1.25s/it]  unshuffled:  67%|██████▋   | 20/30 [00:24<00:10,  1.08s/it]  unshuffled:  70%|███████   | 21/30 [00:24<00:07,  1.14it/s]  unshuffled:  73%|███████▎  | 22/30 [00:26<00:09,  1.16s/it]  unshuffled:  77%|███████▋  | 23/30 [00:29<00:10,  1.56s/it]  unshuffled:  80%|████████  | 24/30 [00:29<00:07,  1.19s/it]  unshuffled:  83%|████████▎ | 25/30 [00:31<00:06,  1.38s/it]  unshuffled:  87%|████████▋ | 26/30 [00:32<00:05,  1.30s/it]  unshuffled:  90%|█████████ | 27/30 [00:35<00:05,  1.75s/it]  unshuffled:  93%|█████████▎| 28/30 [00:35<00:02,  1.27s/it]  unshuffled:  97%|█████████▋| 29/30 [00:36<00:01,  1.20s/it]  unshuffled: 100%|██████████| 30/30 [00:38<00:00,  1.49s/it]  unshuffled: 100%|██████████| 30/30 [00:38<00:00,  1.29s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.28 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.55 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.80 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.54 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.88 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.32 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.79 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.93 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 9.05 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.62 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.11 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 25.38 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.22 GiB. GP
+    Accuracy: 63.3% (19/30)
+    Top 5 heads: ['L0H22', 'L0H28', 'L0H21', 'L17H24', 'L0H30']
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:00<00:15,  1.93it/s]  shuffled:   7%|▋         | 2/30 [00:01<00:23,  1.19it/s]  shuffled:  10%|█         | 3/30 [00:04<00:42,  1.58s/it]  shuffled:  13%|█▎        | 4/30 [00:05<00:36,  1.40s/it]  shuffled:  17%|█▋        | 5/30 [00:05<00:28,  1.15s/it]  shuffled:  20%|██        | 6/30 [00:06<00:22,  1.07it/s]  shuffled:  23%|██▎       | 7/30 [00:06<00:18,  1.21it/s]  shuffled:  27%|██▋       | 8/30 [00:08<00:21,  1.04it/s]  shuffled:  30%|███       | 9/30 [00:09<00:22,  1.05s/it]  shuffled:  33%|███▎      | 10/30 [00:10<00:21,  1.08s/it]  shuffled:  37%|███▋      | 11/30 [00:11<00:17,  1.07it/s]  shuffled:  40%|████      | 12/30 [00:12<00:16,  1.07it/s]  shuffled:  43%|████▎     | 13/30 [00:13<00:19,  1.17s/it]  shuffled:  47%|████▋     | 14/30 [00:15<00:20,  1.29s/it]  shuffled:  50%|█████     | 15/30 [00:16<00:18,  1.25s/it]  shuffled:  53%|█████▎    | 16/30 [00:19<00:25,  1.80s/it]  shuffled:  57%|█████▋    | 17/30 [00:21<00:25,  1.95s/it]  shuffled:  60%|██████    | 18/30 [00:22<00:18,  1.58s/it]  shuffled:  63%|██████▎   | 19/30 [00:23<00:13,  1.25s/it]  shuffled:  67%|██████▋   | 20/30 [00:23<00:10,  1.01s/it]  shuffled:  70%|███████   | 21/30 [00:24<00:07,  1.22it/s]  shuffled:  73%|███████▎  | 22/30 [00:25<00:08,  1.10s/it]  shuffled:  77%|███████▋  | 23/30 [00:28<00:11,  1.64s/it]  shuffled:  80%|████████  | 24/30 [00:29<00:07,  1.31s/it]  shuffled:  83%|████████▎ | 25/30 [00:30<00:06,  1.33s/it]  shuffled:  87%|████████▋ | 26/30 [00:31<00:04,  1.21s/it]  shuffled:  90%|█████████ | 27/30 [00:33<00:04,  1.56s/it]  shuffled:  93%|█████████▎| 28/30 [00:34<00:02,  1.14s/it]  shuffled:  97%|█████████▋| 29/30 [00:35<00:01,  1.15s/it]  shuffled: 100%|██████████| 30/30 [00:37<00:00,  1.44s/it]  shuffled: 100%|██████████| 30/30 [00:37<00:00,  1.25s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.15 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.36 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.51 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.49 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.81 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.25 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.71 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.87 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 8.93 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.59 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.09 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 50.84 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.21 GiB. GP
+    Accuracy: 50.0% (15/30)
+    Top 5 heads: ['L17H24', 'L0H22', 'L0H28', 'L0H21', 'L18H20']
+
+======================================================================
+Context Length: 1000 tokens
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]  unshuffled:   3%|▎         | 1/30 [00:00<00:14,  1.94it/s]  unshuffled:   7%|▋         | 2/30 [00:01<00:20,  1.34it/s]  unshuffled:  10%|█         | 3/30 [00:04<00:42,  1.59s/it]  unshuffled:  13%|█▎        | 4/30 [00:05<00:37,  1.44s/it]  unshuffled:  17%|█▋        | 5/30 [00:05<00:28,  1.12s/it]  unshuffled:  20%|██        | 6/30 [00:06<00:20,  1.18it/s]  unshuffled:  23%|██▎       | 7/30 [00:06<00:17,  1.30it/s]  unshuffled:  27%|██▋       | 8/30 [00:08<00:21,  1.04it/s]  unshuffled:  30%|███       | 9/30 [00:09<00:22,  1.09s/it]  unshuffled:  33%|███▎      | 10/30 [00:10<00:21,  1.07s/it]  unshuffled:  37%|███▋      | 11/30 [00:11<00:19,  1.00s/it]  unshuffled:  40%|████      | 12/30 [00:12<00:17,  1.04it/s]  unshuffled:  43%|████▎     | 13/30 [00:14<00:22,  1.32s/it]  unshuffled:  47%|████▋     | 14/30 [00:15<00:22,  1.41s/it]  unshuffled:  50%|█████     | 15/30 [00:17<00:20,  1.40s/it]  unshuffled:  53%|█████▎    | 16/30 [00:20<00:27,  1.94s/it]  unshuffled:  57%|█████▋    | 17/30 [00:22<00:26,  2.03s/it]  unshuffled:  60%|██████    | 18/30 [00:23<00:19,  1.62s/it]  unshuffled:  63%|██████▎   | 19/30 [00:23<00:14,  1.28s/it]  unshuffled:  67%|██████▋   | 20/30 [00:24<00:10,  1.10s/it]  unshuffled:  70%|███████   | 21/30 [00:24<00:08,  1.12it/s]  unshuffled:  73%|███████▎  | 22/30 [00:26<00:09,  1.17s/it]  unshuffled:  77%|███████▋  | 23/30 [00:29<00:10,  1.57s/it]  unshuffled:  80%|████████  | 24/30 [00:29<00:07,  1.19s/it]  unshuffled:  83%|████████▎ | 25/30 [00:31<00:06,  1.38s/it]  unshuffled:  87%|████████▋ | 26/30 [00:32<00:05,  1.30s/it]  unshuffled:  90%|█████████ | 27/30 [00:35<00:05,  1.75s/it]  unshuffled:  93%|█████████▎| 28/30 [00:35<00:02,  1.38s/it]  unshuffled:  97%|█████████▋| 29/30 [00:36<00:01,  1.20s/it]  unshuffled: 100%|██████████| 30/30 [00:38<00:00,  1.50s/it]  unshuffled: 100%|██████████| 30/30 [00:38<00:00,  1.29s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.28 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.55 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.80 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.54 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.88 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.32 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.79 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.93 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 9.05 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.62 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.11 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 25.38 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.22 GiB. GP
+    Accuracy: 63.3% (19/30)
+    Top 5 heads: ['L0H22', 'L17H24', 'L0H28', 'L0H21', 'L0H30']
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:00<00:16,  1.80it/s]  shuffled:   7%|▋         | 2/30 [00:01<00:19,  1.44it/s]  shuffled:  10%|█         | 3/30 [00:03<00:40,  1.51s/it]  shuffled:  13%|█▎        | 4/30 [00:04<00:34,  1.32s/it]  shuffled:  17%|█▋        | 5/30 [00:05<00:27,  1.11s/it]  shuffled:  20%|██        | 6/30 [00:06<00:22,  1.09it/s]  shuffled:  23%|██▎       | 7/30 [00:06<00:18,  1.25it/s]  shuffled:  27%|██▋       | 8/30 [00:07<00:20,  1.06it/s]  shuffled:  30%|███       | 9/30 [00:08<00:20,  1.04it/s]  shuffled:  33%|███▎      | 10/30 [00:10<00:20,  1.01s/it]  shuffled:  37%|███▋      | 11/30 [00:10<00:16,  1.13it/s]  shuffled:  40%|████      | 12/30 [00:11<00:15,  1.14it/s]  shuffled:  43%|████▎     | 13/30 [00:13<00:19,  1.13s/it]  shuffled:  47%|████▋     | 14/30 [00:14<00:20,  1.26s/it]  shuffled:  50%|█████     | 15/30 [00:15<00:18,  1.23s/it]  shuffled:  53%|█████▎    | 16/30 [00:18<00:24,  1.72s/it]  shuffled:  57%|█████▋    | 17/30 [00:21<00:25,  2.00s/it]  shuffled:  60%|██████    | 18/30 [00:22<00:19,  1.61s/it]  shuffled:  63%|██████▎   | 19/30 [00:22<00:14,  1.34s/it]  shuffled:  67%|██████▋   | 20/30 [00:23<00:11,  1.15s/it]  shuffled:  70%|███████   | 21/30 [00:23<00:08,  1.08it/s]  shuffled:  73%|███████▎  | 22/30 [00:25<00:09,  1.17s/it]  shuffled:  77%|███████▋  | 23/30 [00:28<00:11,  1.62s/it]  shuffled:  80%|████████  | 24/30 [00:28<00:07,  1.22s/it]  shuffled:  83%|████████▎ | 25/30 [00:30<00:06,  1.31s/it]  shuffled:  87%|████████▋ | 26/30 [00:31<00:04,  1.18s/it]  shuffled:  90%|█████████ | 27/30 [00:33<00:04,  1.61s/it]  shuffled:  93%|█████████▎| 28/30 [00:34<00:02,  1.27s/it]  shuffled:  97%|█████████▋| 29/30 [00:35<00:01,  1.17s/it]  shuffled: 100%|██████████| 30/30 [00:36<00:00,  1.30s/it]  shuffled: 100%|██████████| 30/30 [00:36<00:00,  1.22s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.15 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.35 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.51 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.49 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.81 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.25 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.71 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.87 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 8.92 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.59 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.09 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 50.84 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.21 GiB. GP
+    Accuracy: 50.0% (15/30)
+    Top 5 heads: ['L17H24', 'L0H22', 'L0H28', 'L0H21', 'L18H20']
+
+======================================================================
+Context Length: 2000 tokens
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]  unshuffled:   3%|▎         | 1/30 [00:00<00:15,  1.93it/s]  unshuffled:   7%|▋         | 2/30 [00:01<00:20,  1.34it/s]  unshuffled:  10%|█         | 3/30 [00:04<00:42,  1.59s/it]  unshuffled:  13%|█▎        | 4/30 [00:05<00:37,  1.44s/it]  unshuffled:  17%|█▋        | 5/30 [00:05<00:28,  1.12s/it]  unshuffled:  20%|██        | 6/30 [00:06<00:22,  1.05it/s]  unshuffled:  23%|██▎       | 7/30 [00:07<00:19,  1.19it/s]  unshuffled:  27%|██▋       | 8/30 [00:08<00:23,  1.08s/it]  unshuffled:  30%|███       | 9/30 [00:09<00:24,  1.17s/it]  unshuffled:  33%|███▎      | 10/30 [00:10<00:22,  1.12s/it]  unshuffled:  37%|███▋      | 11/30 [00:11<00:19,  1.04s/it]  unshuffled:  40%|████      | 12/30 [00:12<00:17,  1.01it/s]  unshuffled:  43%|████▎     | 13/30 [00:14<00:22,  1.34s/it]  unshuffled:  47%|████▋     | 14/30 [00:16<00:22,  1.42s/it]  unshuffled:  50%|█████     | 15/30 [00:17<00:21,  1.41s/it]  unshuffled:  53%|█████▎    | 16/30 [00:21<00:27,  1.94s/it]  unshuffled:  57%|█████▋    | 17/30 [00:23<00:25,  1.99s/it]  unshuffled:  60%|██████    | 18/30 [00:23<00:19,  1.59s/it]  unshuffled:  63%|██████▎   | 19/30 [00:24<00:13,  1.26s/it]  unshuffled:  67%|██████▋   | 20/30 [00:24<00:10,  1.09s/it]  unshuffled:  70%|███████   | 21/30 [00:25<00:07,  1.13it/s]  unshuffled:  73%|███████▎  | 22/30 [00:27<00:09,  1.16s/it]  unshuffled:  77%|███████▋  | 23/30 [00:29<00:10,  1.56s/it]  unshuffled:  80%|████████  | 24/30 [00:30<00:07,  1.29s/it]  unshuffled:  83%|████████▎ | 25/30 [00:32<00:07,  1.45s/it]  unshuffled:  87%|████████▋ | 26/30 [00:33<00:05,  1.35s/it]  unshuffled:  90%|█████████ | 27/30 [00:36<00:05,  1.79s/it]  unshuffled:  93%|█████████▎| 28/30 [00:36<00:02,  1.44s/it]  unshuffled:  97%|█████████▋| 29/30 [00:37<00:01,  1.25s/it]  unshuffled: 100%|██████████| 30/30 [00:39<00:00,  1.53s/it]  unshuffled: 100%|██████████| 30/30 [00:39<00:00,  1.32s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.28 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.55 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.80 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.54 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.88 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.32 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.79 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.93 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 9.05 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.62 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.11 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 25.38 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.22 GiB. GP
+    Accuracy: 60.0% (18/30)
+    Top 5 heads: ['L0H22', 'L17H24', 'L0H28', 'L0H21', 'L0H30']
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:00<00:16,  1.80it/s]  shuffled:   7%|▋         | 2/30 [00:01<00:19,  1.44it/s]  shuffled:  10%|█         | 3/30 [00:03<00:40,  1.51s/it]  shuffled:  13%|█▎        | 4/30 [00:04<00:34,  1.31s/it]  shuffled:  17%|█▋        | 5/30 [00:05<00:30,  1.20s/it]  shuffled:  20%|██        | 6/30 [00:06<00:24,  1.01s/it]  shuffled:  23%|██▎       | 7/30 [00:07<00:19,  1.16it/s]  shuffled:  27%|██▋       | 8/30 [00:08<00:25,  1.18s/it]  shuffled:  30%|███       | 9/30 [00:09<00:23,  1.12s/it]  shuffled:  33%|███▎      | 10/30 [00:11<00:22,  1.12s/it]  shuffled:  37%|███▋      | 11/30 [00:11<00:18,  1.04it/s]  shuffled:  40%|████      | 12/30 [00:12<00:16,  1.07it/s]  shuffled:  43%|████▎     | 13/30 [00:14<00:19,  1.17s/it]  shuffled:  47%|████▋     | 14/30 [00:15<00:20,  1.29s/it]  shuffled:  50%|█████     | 15/30 [00:16<00:18,  1.25s/it]  shuffled:  53%|█████▎    | 16/30 [00:20<00:25,  1.83s/it]  shuffled:  57%|█████▋    | 17/30 [00:22<00:25,  1.93s/it]  shuffled:  60%|██████    | 18/30 [00:22<00:18,  1.54s/it]  shuffled:  63%|██████▎   | 19/30 [00:23<00:14,  1.29s/it]  shuffled:  67%|██████▋   | 20/30 [00:24<00:10,  1.03s/it]  shuffled:  70%|███████   | 21/30 [00:24<00:07,  1.20it/s]  shuffled:  73%|███████▎  | 22/30 [00:26<00:08,  1.11s/it]  shuffled:  77%|███████▋  | 23/30 [00:28<00:11,  1.58s/it]  shuffled:  80%|████████  | 24/30 [00:29<00:07,  1.22s/it]  shuffled:  83%|████████▎ | 25/30 [00:30<00:06,  1.35s/it]  shuffled:  87%|████████▋ | 26/30 [00:31<00:04,  1.22s/it]  shuffled:  90%|█████████ | 27/30 [00:34<00:05,  1.69s/it]  shuffled:  93%|█████████▎| 28/30 [00:34<00:02,  1.30s/it]  shuffled:  97%|█████████▋| 29/30 [00:35<00:01,  1.19s/it]  shuffled: 100%|██████████| 30/30 [00:37<00:00,  1.32s/it]  shuffled: 100%|██████████| 30/30 [00:37<00:00,  1.25s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.15 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.35 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.51 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.49 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.82 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.25 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.71 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.87 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 8.92 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.59 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.09 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 50.84 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.21 GiB. GP
+    Accuracy: 40.0% (12/30)
+    Top 5 heads: ['L17H24', 'L0H22', 'L18H20', 'L0H28', 'L0H21']
+
+======================================================================
+Context Length: 4000 tokens
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]  unshuffled:   3%|▎         | 1/30 [00:01<00:36,  1.27s/it]  unshuffled:   7%|▋         | 2/30 [00:02<00:28,  1.02s/it]  unshuffled:  10%|█         | 3/30 [00:04<00:47,  1.74s/it]  unshuffled:  13%|█▎        | 4/30 [00:06<00:40,  1.56s/it]  unshuffled:  17%|█▋        | 5/30 [00:07<00:35,  1.41s/it]  unshuffled:  20%|██        | 6/30 [00:07<00:29,  1.22s/it]  unshuffled:  23%|██▎       | 7/30 [00:08<00:23,  1.02s/it]  unshuffled:  27%|██▋       | 8/30 [00:09<00:24,  1.13s/it]  unshuffled:  30%|███       | 9/30 [00:11<00:25,  1.20s/it]  unshuffled:  33%|███▎      | 10/30 [00:12<00:22,  1.14s/it]  unshuffled:  37%|███▋      | 11/30 [00:13<00:21,  1.14s/it]  unshuffled:  40%|████      | 12/30 [00:14<00:20,  1.13s/it]  unshuffled:  43%|████▎     | 13/30 [00:16<00:24,  1.44s/it]  unshuffled:  47%|████▋     | 14/30 [00:18<00:23,  1.49s/it]  unshuffled:  50%|█████     | 15/30 [00:19<00:21,  1.46s/it]  unshuffled:  53%|█████▎    | 16/30 [00:22<00:27,  1.98s/it]  unshuffled:  57%|█████▋    | 17/30 [00:25<00:26,  2.05s/it]  unshuffled:  60%|██████    | 18/30 [00:25<00:20,  1.69s/it]  unshuffled:  63%|██████▎   | 19/30 [00:26<00:15,  1.44s/it]  unshuffled:  67%|██████▋   | 20/30 [00:27<00:13,  1.34s/it]  unshuffled:  70%|███████   | 21/30 [00:28<00:10,  1.20s/it]  unshuffled:  73%|███████▎  | 22/30 [00:30<00:11,  1.38s/it]  unshuffled:  77%|███████▋  | 23/30 [00:33<00:12,  1.72s/it]  unshuffled:  80%|████████  | 24/30 [00:34<00:08,  1.46s/it]  unshuffled:  83%|████████▎ | 25/30 [00:35<00:07,  1.56s/it]  unshuffled:  87%|████████▋ | 26/30 [00:36<00:05,  1.43s/it]  unshuffled:  90%|█████████ | 27/30 [00:39<00:05,  1.84s/it]  unshuffled:  93%|█████████▎| 28/30 [00:40<00:03,  1.63s/it]  unshuffled:  97%|█████████▋| 29/30 [00:41<00:01,  1.48s/it]  unshuffled: 100%|██████████| 30/30 [00:43<00:00,  1.63s/it]  unshuffled: 100%|██████████| 30/30 [00:43<00:00,  1.47s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.28 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.55 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.80 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.54 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.88 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.32 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.79 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.93 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 9.05 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.62 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.11 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 50.75 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.22 GiB. GP
+    Accuracy: 53.3% (16/30)
+    Top 5 heads: ['L17H24', 'L18H20', 'L16H1', 'L18H22', 'L17H26']
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:01<00:36,  1.26s/it]  shuffled:   7%|▋         | 2/30 [00:02<00:28,  1.02s/it]  shuffled:  10%|█         | 3/30 [00:04<00:45,  1.68s/it]  shuffled:  13%|█▎        | 4/30 [00:05<00:36,  1.42s/it]  shuffled:  17%|█▋        | 5/30 [00:06<00:32,  1.32s/it]  shuffled:  20%|██        | 6/30 [00:07<00:28,  1.20s/it]  shuffled:  23%|██▎       | 7/30 [00:08<00:22,  1.00it/s]  shuffled:  27%|██▋       | 8/30 [00:09<00:25,  1.16s/it]  shuffled:  30%|███       | 9/30 [00:11<00:25,  1.19s/it]  shuffled:  33%|███▎      | 10/30 [00:12<00:24,  1.21s/it]  shuffled:  37%|███▋      | 11/30 [00:13<00:21,  1.14s/it]  shuffled:  40%|████      | 12/30 [00:14<00:19,  1.09s/it]  shuffled:  43%|████▎     | 13/30 [00:16<00:23,  1.36s/it]  shuffled:  47%|████▋     | 14/30 [00:17<00:22,  1.42s/it]  shuffled:  50%|█████     | 15/30 [00:18<00:20,  1.34s/it]  shuffled:  53%|█████▎    | 16/30 [00:21<00:25,  1.80s/it]  shuffled:  57%|█████▋    | 17/30 [00:24<00:25,  1.99s/it]  shuffled:  60%|██████    | 18/30 [00:25<00:19,  1.65s/it]  shuffled:  63%|██████▎   | 19/30 [00:26<00:16,  1.53s/it]  shuffled:  67%|██████▋   | 20/30 [00:27<00:13,  1.33s/it]  shuffled:  70%|███████   | 21/30 [00:28<00:11,  1.22s/it]  shuffled:  73%|███████▎  | 22/30 [00:29<00:11,  1.39s/it]  shuffled:  77%|███████▋  | 23/30 [00:32<00:12,  1.80s/it]  shuffled:  80%|████████  | 24/30 [00:33<00:09,  1.52s/it]  shuffled:  83%|████████▎ | 25/30 [00:34<00:07,  1.48s/it]  shuffled:  87%|████████▋ | 26/30 [00:35<00:05,  1.33s/it]  shuffled:  90%|█████████ | 27/30 [00:38<00:05,  1.77s/it]  shuffled:  93%|█████████▎| 28/30 [00:39<00:03,  1.54s/it]  shuffled:  97%|█████████▋| 29/30 [00:40<00:01,  1.42s/it]  shuffled: 100%|██████████| 30/30 [00:42<00:00,  1.56s/it]  shuffled: 100%|██████████| 30/30 [00:42<00:00,  1.43s/it]
+
+    Attention error: CUDA out of memory. Tried to allocate 10.15 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 40.36 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 26.51 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.49 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.81 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 13.25 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 7.71 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 4.87 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 8.92 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 3.59 GiB. GP
+
+    Attention error: CUDA out of memory. Tried to allocate 10.09 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 50.84 GiB. G
+
+    Attention error: CUDA out of memory. Tried to allocate 5.21 GiB. GP
+    Accuracy: 40.0% (12/30)
+    Top 5 heads: ['L17H24', 'L18H20', 'L18H22', 'L20H14', 'L16H1']
+
+======================================================================
+Context Length: 8000 tokens
+  (Accuracy only - attention skipped for memory)
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]  unshuffled:   3%|▎         | 1/30 [00:01<00:48,  1.68s/it]  unshuffled:   7%|▋         | 2/30 [00:03<00:50,  1.82s/it]  unshuffled:  10%|█         | 3/30 [00:05<00:54,  2.03s/it]  unshuffled:  13%|█▎        | 4/30 [00:06<00:39,  1.53s/it]  unshuffled:  17%|█▋        | 5/30 [00:08<00:41,  1.67s/it]  unshuffled:  20%|██        | 6/30 [00:09<00:37,  1.58s/it]  unshuffled:  23%|██▎       | 7/30 [00:10<00:27,  1.19s/it]  unshuffled:  27%|██▋       | 8/30 [00:12<00:29,  1.34s/it]  unshuffled:  30%|███       | 9/30 [00:13<00:30,  1.44s/it]  unshuffled:  33%|███▎      | 10/30 [00:15<00:31,  1.59s/it]  unshuffled:  37%|███▋      | 11/30 [00:17<00:30,  1.61s/it]  unshuffled:  40%|████      | 12/30 [00:18<00:27,  1.55s/it]  unshuffled:  43%|████▎     | 13/30 [00:20<00:28,  1.66s/it]  unshuffled:  47%|████▋     | 14/30 [00:21<00:25,  1.58s/it]  unshuffled:  50%|█████     | 15/30 [00:23<00:24,  1.60s/it]  unshuffled:  53%|█████▎    | 16/30 [00:26<00:27,  1.97s/it]  unshuffled:  57%|█████▋    | 17/30 [00:28<00:24,  1.88s/it]  unshuffled:  60%|██████    | 18/30 [00:29<00:20,  1.74s/it]  unshuffled:  63%|██████▎   | 19/30 [00:31<00:18,  1.71s/it]  unshuffled:  67%|██████▋   | 20/30 [00:32<00:16,  1.62s/it]  unshuffled:  70%|███████   | 21/30 [00:34<00:14,  1.63s/it]  unshuffled:  73%|███████▎  | 22/30 [00:36<00:13,  1.72s/it]  unshuffled:  77%|███████▋  | 23/30 [00:38<00:12,  1.81s/it]  unshuffled:  80%|████████  | 24/30 [00:39<00:10,  1.77s/it]  unshuffled:  83%|████████▎ | 25/30 [00:41<00:08,  1.74s/it]  unshuffled:  87%|████████▋ | 26/30 [00:43<00:07,  1.79s/it]  unshuffled:  90%|█████████ | 27/30 [00:45<00:05,  1.96s/it]  unshuffled:  93%|█████████▎| 28/30 [00:47<00:03,  1.82s/it]  unshuffled:  97%|█████████▋| 29/30 [00:47<00:01,  1.40s/it]  unshuffled: 100%|██████████| 30/30 [00:49<00:00,  1.48s/it]  unshuffled: 100%|██████████| 30/30 [00:49<00:00,  1.65s/it]
+    Accuracy: 66.7% (20/30)
+    (No attention data - context too long)
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:01<00:40,  1.40s/it]  shuffled:   7%|▋         | 2/30 [00:03<00:47,  1.70s/it]  shuffled:  10%|█         | 3/30 [00:05<00:52,  1.95s/it]  shuffled:  13%|█▎        | 4/30 [00:06<00:38,  1.47s/it]  shuffled:  17%|█▋        | 5/30 [00:08<00:39,  1.58s/it]  shuffled:  20%|██        | 6/30 [00:09<00:36,  1.51s/it]  shuffled:  23%|██▎       | 7/30 [00:09<00:26,  1.15s/it]  shuffled:  27%|██▋       | 8/30 [00:11<00:28,  1.31s/it]  shuffled:  30%|███       | 9/30 [00:12<00:28,  1.34s/it]  shuffled:  33%|███▎      | 10/30 [00:14<00:27,  1.35s/it]  shuffled:  37%|███▋      | 11/30 [00:16<00:28,  1.53s/it]  shuffled:  40%|████      | 12/30 [00:17<00:28,  1.56s/it]  shuffled:  43%|████▎     | 13/30 [00:19<00:28,  1.67s/it]  shuffled:  47%|████▋     | 14/30 [00:21<00:27,  1.74s/it]  shuffled:  50%|█████     | 15/30 [00:23<00:25,  1.72s/it]  shuffled:  53%|█████▎    | 16/30 [00:25<00:27,  1.97s/it]  shuffled:  57%|█████▋    | 17/30 [00:27<00:24,  1.88s/it]  shuffled:  60%|██████    | 18/30 [00:29<00:21,  1.81s/it]  shuffled:  63%|██████▎   | 19/30 [00:30<00:19,  1.76s/it]  shuffled:  67%|██████▋   | 20/30 [00:32<00:16,  1.65s/it]  shuffled:  70%|███████   | 21/30 [00:33<00:14,  1.65s/it]  shuffled:  73%|███████▎  | 22/30 [00:35<00:13,  1.65s/it]  shuffled:  77%|███████▋  | 23/30 [00:37<00:12,  1.75s/it]  shuffled:  80%|████████  | 24/30 [00:39<00:10,  1.73s/it]  shuffled:  83%|████████▎ | 25/30 [00:41<00:08,  1.79s/it]  shuffled:  87%|████████▋ | 26/30 [00:42<00:06,  1.74s/it]  shuffled:  90%|█████████ | 27/30 [00:44<00:05,  1.83s/it]  shuffled:  93%|█████████▎| 28/30 [00:46<00:03,  1.81s/it]  shuffled:  97%|█████████▋| 29/30 [00:47<00:01,  1.43s/it]  shuffled: 100%|██████████| 30/30 [00:48<00:00,  1.50s/it]  shuffled: 100%|██████████| 30/30 [00:48<00:00,  1.63s/it]
+    Accuracy: 33.3% (10/30)
+    (No attention data - context too long)
+
+======================================================================
+Context Length: 10000 tokens
+  (Accuracy only - attention skipped for memory)
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]  unshuffled:   3%|▎         | 1/30 [00:02<01:15,  2.60s/it]  unshuffled:   7%|▋         | 2/30 [00:04<01:06,  2.37s/it]  unshuffled:  10%|█         | 3/30 [00:07<01:09,  2.57s/it]  unshuffled:  13%|█▎        | 4/30 [00:08<00:48,  1.88s/it]  unshuffled:  17%|█▋        | 5/30 [00:11<00:54,  2.16s/it]  unshuffled:  20%|██        | 6/30 [00:13<00:56,  2.34s/it]  unshuffled:  23%|██▎       | 7/30 [00:14<00:40,  1.76s/it]  unshuffled:  27%|██▋       | 8/30 [00:17<00:46,  2.11s/it]  unshuffled:  30%|███       | 9/30 [00:19<00:46,  2.20s/it]  unshuffled:  33%|███▎      | 10/30 [00:22<00:45,  2.28s/it]  unshuffled:  37%|███▋      | 11/30 [00:24<00:43,  2.31s/it]  unshuffled:  40%|████      | 12/30 [00:27<00:44,  2.46s/it]  unshuffled:  43%|████▎     | 13/30 [00:29<00:41,  2.42s/it]  unshuffled:  47%|████▋     | 14/30 [00:31<00:38,  2.41s/it]  unshuffled:  50%|█████     | 15/30 [00:34<00:36,  2.41s/it]  unshuffled:  53%|█████▎    | 16/30 [00:37<00:37,  2.65s/it]  unshuffled:  57%|█████▋    | 17/30 [00:39<00:33,  2.56s/it]  unshuffled:  60%|██████    | 18/30 [00:42<00:30,  2.53s/it]  unshuffled:  63%|██████▎   | 19/30 [00:44<00:27,  2.49s/it]  unshuffled:  67%|██████▋   | 20/30 [00:47<00:24,  2.45s/it]  unshuffled:  70%|███████   | 21/30 [00:49<00:21,  2.43s/it]  unshuffled:  73%|███████▎  | 22/30 [00:52<00:20,  2.59s/it]  unshuffled:  77%|███████▋  | 23/30 [00:54<00:17,  2.51s/it]  unshuffled:  80%|████████  | 24/30 [00:57<00:14,  2.49s/it]  unshuffled:  83%|████████▎ | 25/30 [00:59<00:12,  2.49s/it]  unshuffled:  87%|████████▋ | 26/30 [01:02<00:10,  2.56s/it]  unshuffled:  90%|█████████ | 27/30 [01:04<00:07,  2.49s/it]  unshuffled:  93%|█████████▎| 28/30 [01:07<00:04,  2.48s/it]  unshuffled:  97%|█████████▋| 29/30 [01:08<00:02,  2.03s/it]  unshuffled: 100%|██████████| 30/30 [01:10<00:00,  2.11s/it]  unshuffled: 100%|██████████| 30/30 [01:10<00:00,  2.35s/it]
+    Accuracy: 0.0% (0/30)
+    (No attention data - context too long)
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:02<01:11,  2.45s/it]  shuffled:   7%|▋         | 2/30 [00:05<01:17,  2.75s/it]  shuffled:  10%|█         | 3/30 [00:08<01:14,  2.75s/it]  shuffled:  13%|█▎        | 4/30 [00:08<00:49,  1.90s/it]  shuffled:  17%|█▋        | 5/30 [00:11<00:54,  2.17s/it]  shuffled:  20%|██        | 6/30 [00:14<00:57,  2.40s/it]  shuffled:  23%|██▎       | 7/30 [00:14<00:41,  1.81s/it]  shuffled:  27%|██▋       | 8/30 [00:17<00:45,  2.08s/it]  shuffled:  30%|███       | 9/30 [00:20<00:47,  2.28s/it]  shuffled:  33%|███▎      | 10/30 [00:23<00:48,  2.45s/it]  shuffled:  37%|███▋      | 11/30 [00:25<00:45,  2.41s/it]  shuffled:  40%|████      | 12/30 [00:28<00:46,  2.58s/it]  shuffled:  43%|████▎     | 13/30 [00:30<00:42,  2.50s/it]  shuffled:  47%|████▋     | 14/30 [00:33<00:41,  2.60s/it]  shuffled:  50%|█████     | 15/30 [00:36<00:39,  2.63s/it]  shuffled:  53%|█████▎    | 16/30 [00:38<00:37,  2.68s/it]  shuffled:  57%|█████▋    | 17/30 [00:41<00:35,  2.70s/it]  shuffled:  60%|██████    | 18/30 [00:44<00:32,  2.74s/it]  shuffled:  63%|██████▎   | 19/30 [00:47<00:30,  2.76s/it]  shuffled:  67%|██████▋   | 20/30 [00:49<00:26,  2.63s/it]  shuffled:  70%|███████   | 21/30 [00:52<00:24,  2.69s/it]  shuffled:  73%|███████▎  | 22/30 [00:54<00:20,  2.58s/it]  shuffled:  77%|███████▋  | 23/30 [00:57<00:17,  2.56s/it]  shuffled:  80%|████████  | 24/30 [01:00<00:16,  2.67s/it]  shuffled:  83%|████████▎ | 25/30 [01:03<00:13,  2.68s/it]  shuffled:  87%|████████▋ | 26/30 [01:05<00:10,  2.58s/it]  shuffled:  90%|█████████ | 27/30 [01:07<00:07,  2.55s/it]  shuffled:  93%|█████████▎| 28/30 [01:10<00:05,  2.64s/it]  shuffled:  97%|█████████▋| 29/30 [01:11<00:02,  2.07s/it]  shuffled: 100%|██████████| 30/30 [01:14<00:00,  2.23s/it]  shuffled: 100%|██████████| 30/30 [01:14<00:00,  2.47s/it]
+    Accuracy: 3.3% (1/30)
+    (No attention data - context too long)
+
+======================================================================
+Context Length: 12000 tokens
+  (Accuracy only - attention skipped for memory)
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]  unshuffled:   3%|▎         | 1/30 [00:04<02:11,  4.52s/it]  unshuffled:   7%|▋         | 2/30 [00:07<01:44,  3.74s/it]  unshuffled:  10%|█         | 3/30 [00:12<01:55,  4.26s/it]  unshuffled:  13%|█▎        | 4/30 [00:13<01:16,  2.96s/it]  unshuffled:  17%|█▋        | 5/30 [00:16<01:15,  3.00s/it]  unshuffled:  20%|██        | 6/30 [00:19<01:14,  3.10s/it]  unshuffled:  23%|██▎       | 7/30 [00:20<00:53,  2.31s/it]  unshuffled:  27%|██▋       | 8/30 [00:25<01:06,  3.04s/it]  unshuffled:  30%|███       | 9/30 [00:28<01:05,  3.12s/it]  unshuffled:  33%|███▎      | 10/30 [00:33<01:13,  3.66s/it]  unshuffled:  37%|███▋      | 11/30 [00:36<01:07,  3.55s/it]  unshuffled:  40%|████      | 12/30 [00:39<01:01,  3.43s/it]  unshuffled:  43%|████▎     | 13/30 [00:42<00:56,  3.34s/it]  unshuffled:  47%|████▋     | 14/30 [00:46<00:52,  3.28s/it]  unshuffled:  50%|█████     | 15/30 [00:49<00:48,  3.24s/it]  unshuffled:  53%|█████▎    | 16/30 [00:54<00:52,  3.74s/it]  unshuffled:  57%|█████▋    | 17/30 [00:59<00:53,  4.09s/it]  unshuffled:  60%|██████    | 18/30 [01:02<00:46,  3.85s/it]  unshuffled:  63%|██████▎   | 19/30 [01:05<00:40,  3.68s/it]  unshuffled:  67%|██████▋   | 20/30 [01:08<00:35,  3.56s/it]  unshuffled:  70%|███████   | 21/30 [01:13<00:35,  3.96s/it]  unshuffled:  73%|███████▎  | 22/30 [01:18<00:33,  4.21s/it]  unshuffled:  77%|███████▋  | 23/30 [01:21<00:27,  3.94s/it]  unshuffled:  80%|████████  | 24/30 [01:25<00:22,  3.78s/it]  unshuffled:  83%|████████▎ | 25/30 [01:28<00:18,  3.67s/it]  unshuffled:  87%|████████▋ | 26/30 [01:32<00:14,  3.56s/it]  unshuffled:  90%|█████████ | 27/30 [01:35<00:10,  3.47s/it]  unshuffled:  93%|█████████▎| 28/30 [01:40<00:07,  3.90s/it]  unshuffled:  97%|█████████▋| 29/30 [01:41<00:03,  3.02s/it]  unshuffled: 100%|██████████| 30/30 [01:44<00:00,  3.03s/it]  unshuffled: 100%|██████████| 30/30 [01:44<00:00,  3.47s/it]
+    Accuracy: 0.0% (0/30)
+    (No attention data - context too long)
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:04<02:23,  4.95s/it]  shuffled:   7%|▋         | 2/30 [00:09<02:16,  4.88s/it]  shuffled:  10%|█         | 3/30 [00:13<01:52,  4.16s/it]  shuffled:  13%|█▎        | 4/30 [00:13<01:14,  2.85s/it]  shuffled:  17%|█▋        | 5/30 [00:18<01:27,  3.52s/it]  shuffled:  20%|██        | 6/30 [00:23<01:34,  3.96s/it]  shuffled:  23%|██▎       | 7/30 [00:24<01:06,  2.91s/it]  shuffled:  27%|██▋       | 8/30 [00:28<01:15,  3.42s/it]  shuffled:  30%|███       | 9/30 [00:33<01:20,  3.82s/it]  shuffled:  33%|███▎      | 10/30 [00:38<01:22,  4.14s/it]  shuffled:  37%|███▋      | 11/30 [00:42<01:22,  4.32s/it]  shuffled:  40%|████      | 12/30 [00:47<01:20,  4.48s/it]  shuffled:  43%|████▎     | 13/30 [00:51<01:10,  4.13s/it]  shuffled:  47%|████▋     | 14/30 [00:54<01:01,  3.87s/it]  shuffled:  50%|█████     | 15/30 [00:59<01:02,  4.15s/it]  shuffled:  53%|█████▎    | 16/30 [01:02<00:54,  3.87s/it]  shuffled:  57%|█████▋    | 17/30 [01:05<00:47,  3.65s/it]  shuffled:  60%|██████    | 18/30 [01:10<00:47,  3.95s/it]  shuffled:  63%|██████▎   | 19/30 [01:14<00:46,  4.19s/it]  shuffled:  67%|██████▋   | 20/30 [01:19<00:43,  4.35s/it]  shuffled:  70%|███████   | 21/30 [01:22<00:35,  4.00s/it]  shuffled:  73%|███████▎  | 22/30 [01:27<00:33,  4.24s/it]  shuffled:  77%|███████▋  | 23/30 [01:32<00:30,  4.39s/it]  shuffled:  80%|████████  | 24/30 [01:37<00:26,  4.49s/it]  shuffled:  83%|████████▎ | 25/30 [01:41<00:22,  4.56s/it]  shuffled:  87%|████████▋ | 26/30 [01:46<00:18,  4.61s/it]  shuffled:  90%|█████████ | 27/30 [01:51<00:13,  4.64s/it]  shuffled:  93%|█████████▎| 28/30 [01:56<00:09,  4.67s/it]  shuffled:  97%|█████████▋| 29/30 [01:56<00:03,  3.49s/it]  shuffled: 100%|██████████| 30/30 [01:59<00:00,  3.36s/it]  shuffled: 100%|██████████| 30/30 [01:59<00:00,  3.99s/it]
+    Accuracy: 3.3% (1/30)
+    (No attention data - context too long)
+
+======================================================================
+Context Length: 15000 tokens
+  (Accuracy only - attention skipped for memory)
+======================================================================
+
+  UNSHUFFLED:
+  unshuffled:   0%|          | 0/30 [00:00<?, ?it/s]  unshuffled:   3%|▎         | 1/30 [00:00<00:13,  2.09it/s]  unshuffled:   7%|▋         | 2/30 [00:00<00:12,  2.28it/s]  unshuffled:  10%|█         | 3/30 [00:01<00:11,  2.35it/s]  unshuffled:  13%|█▎        | 4/30 [00:01<00:13,  1.93it/s]  unshuffled:  17%|█▋        | 5/30 [00:02<00:12,  1.96it/s]  unshuffled:  20%|██        | 6/30 [00:03<00:13,  1.82it/s]  unshuffled:  23%|██▎       | 7/30 [00:03<00:13,  1.72it/s]  unshuffled:  27%|██▋       | 8/30 [00:04<00:13,  1.69it/s]  unshuffled:  30%|███       | 9/30 [00:04<00:12,  1.67it/s]  unshuffled:  33%|███▎      | 10/30 [00:05<00:12,  1.65it/s]  unshuffled:  37%|███▋      | 11/30 [00:06<00:11,  1.64it/s]  unshuffled:  40%|████      | 12/30 [00:06<00:11,  1.63it/s]  unshuffled:  43%|████▎     | 13/30 [00:07<00:10,  1.63it/s]  unshuffled:  47%|████▋     | 14/30 [00:08<00:09,  1.62it/s]  unshuffled:  50%|█████     | 15/30 [00:08<00:09,  1.60it/s]  unshuffled:  53%|█████▎    | 16/30 [00:09<00:08,  1.60it/s]  unshuffled:  57%|█████▋    | 17/30 [00:09<00:08,  1.61it/s]  unshuffled:  60%|██████    | 18/30 [00:10<00:07,  1.61it/s]  unshuffled:  63%|██████▎   | 19/30 [00:11<00:06,  1.61it/s]  unshuffled:  67%|██████▋   | 20/30 [00:11<00:06,  1.61it/s]  unshuffled:  70%|███████   | 21/30 [00:12<00:05,  1.61it/s]  unshuffled:  73%|███████▎  | 22/30 [00:13<00:05,  1.59it/s]  unshuffled:  77%|███████▋  | 23/30 [00:13<00:04,  1.60it/s]  unshuffled:  80%|████████  | 24/30 [00:14<00:03,  1.60it/s]  unshuffled:  83%|████████▎ | 25/30 [00:14<00:03,  1.61it/s]  unshuffled:  87%|████████▋ | 26/30 [00:15<00:02,  1.59it/s]  unshuffled:  90%|█████████ | 27/30 [00:16<00:01,  1.60it/s]  unshuffled:  93%|█████████▎| 28/30 [00:16<00:01,  1.60it/s]  unshuffled:  97%|█████████▋| 29/30 [00:17<00:00,  1.49it/s]  unshuffled: 100%|██████████| 30/30 [00:18<00:00,  1.62it/s]  unshuffled: 100%|██████████| 30/30 [00:18<00:00,  1.66it/s]
+    Accuracy: 0.0% (0/30)
+    (No attention data - context too long)
+
+  SHUFFLED:
+  shuffled:   0%|          | 0/30 [00:00<?, ?it/s]  shuffled:   3%|▎         | 1/30 [00:00<00:12,  2.41it/s]  shuffled:   7%|▋         | 2/30 [00:00<00:11,  2.39it/s]  shuffled:  10%|█         | 3/30 [00:01<00:11,  2.40it/s]  shuffled:  13%|█▎        | 4/30 [00:01<00:13,  2.00it/s]  shuffled:  17%|█▋        | 5/30 [00:02<00:15,  1.59it/s]  shuffled:  20%|██        | 6/30 [00:03<00:15,  1.60it/s]  shuffled:  23%|██▎       | 7/30 [00:04<00:14,  1.58it/s]  shuffled:  27%|██▋       | 8/30 [00:04<00:13,  1.59it/s]  shuffled:  30%|███       | 9/30 [00:05<00:13,  1.57it/s]  shuffled:  33%|███▎      | 10/30 [00:05<00:12,  1.59it/s]  shuffled:  37%|███▋      | 11/30 [00:06<00:11,  1.59it/s]  shuffled:  40%|████      | 12/30 [00:07<00:11,  1.60it/s]  shuffled:  43%|████▎     | 13/30 [00:07<00:10,  1.58it/s]  shuffled:  47%|████▋     | 14/30 [00:08<00:10,  1.59it/s]  shuffled:  50%|█████     | 15/30 [00:09<00:09,  1.58it/s]  shuffled:  53%|█████▎    | 16/30 [00:09<00:08,  1.59it/s]  shuffled:  57%|█████▋    | 17/30 [00:10<00:08,  1.60it/s]  shuffled:  60%|██████    | 18/30 [00:10<00:07,  1.60it/s]  shuffled:  63%|██████▎   | 19/30 [00:11<00:06,  1.61it/s]  shuffled:  67%|██████▋   | 20/30 [00:12<00:06,  1.61it/s]  shuffled:  70%|███████   | 21/30 [00:12<00:05,  1.59it/s]  shuffled:  73%|███████▎  | 22/30 [00:13<00:05,  1.57it/s]  shuffled:  77%|███████▋  | 23/30 [00:14<00:04,  1.59it/s]  shuffled:  80%|████████  | 24/30 [00:14<00:03,  1.59it/s]  shuffled:  83%|████████▎ | 25/30 [00:15<00:03,  1.58it/s]  shuffled:  87%|████████▋ | 26/30 [00:15<00:02,  1.59it/s]  shuffled:  90%|█████████ | 27/30 [00:16<00:01,  1.60it/s]  shuffled:  93%|█████████▎| 28/30 [00:17<00:01,  1.60it/s]  shuffled:  97%|█████████▋| 29/30 [00:17<00:00,  1.49it/s]  shuffled: 100%|██████████| 30/30 [00:18<00:00,  1.62it/s]  shuffled: 100%|██████████| 30/30 [00:18<00:00,  1.63it/s]
+    Accuracy: 0.0% (0/30)
+    (No attention data - context too long)
+
+Saved: llama3_results/head/context_attention_sweep.json
+
+======================================================================
+SUMMARY: CONTEXT ATTENTION ACROSS CONTEXT LENGTHS
+======================================================================
+
+Context | Unshuf Acc | Shuf Acc | Drop | Top Head (unshuf)
+----------------------------------------------------------------------
+    200 |      63.3% |    43.3% | +20.0% | L0H22
+    500 |      63.3% |    50.0% | +13.3% | L0H22
+   1000 |      63.3% |    50.0% | +13.3% | L0H22
+   2000 |      60.0% |    40.0% | +20.0% | L0H22
+   4000 |      53.3% |    40.0% | +13.3% | L17H24
+   8000 |      66.7% |    33.3% | +33.3% | N/A (>4K)
+  10000 |       0.0% |     3.3% |  -3.3% | N/A (>4K)
+  12000 |       0.0% |     3.3% |  -3.3% | N/A (>4K)
+  15000 |       0.0% |     0.0% |  +0.0% | N/A (>4K)
+
+======================================================================
+COMPLETE
+======================================================================

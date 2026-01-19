@@ -20,6 +20,28 @@ print("="*60)
 print("LLAMA 3.1 FULL SWEEP UP TO 130K TOKENS (SHUFFLED)")
 print("="*60)
 
+# Check for partial results to continue from
+partial_path = 'llama31_results/llama31_context_sweep_shuffled_partial.json'
+results_by_length = {}
+detailed_results = {}
+
+if os.path.exists(partial_path):
+    print(f"\nFound partial results: {partial_path}")
+    with open(partial_path, 'r') as f:
+        partial = json.load(f)
+    # Load existing results (convert string keys to int for comparison)
+    for k, v in partial['results_by_length'].items():
+        results_by_length[int(k)] = v
+    for k, v in partial.get('detailed_results', {}).items():
+        detailed_results[int(k)] = v
+    completed = set(results_by_length.keys())
+    print(f"Already completed: {sorted(completed)}")
+    CONTEXT_LENGTHS = [c for c in CONTEXT_LENGTHS if c not in completed]
+    print(f"Remaining to run: {CONTEXT_LENGTHS}")
+    if not CONTEXT_LENGTHS:
+        print("All context lengths already completed!")
+        sys.exit(0)
+
 print("\nLoading model: Llama 3.1 8B")
 model_name = MODELS["llama31"]
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -34,9 +56,6 @@ print("Loading samples...")
 ground_truth = load_ground_truth()
 samples = load_edgar_samples(30, ground_truth)
 haystack_text = get_haystack_text()
-
-results_by_length = {}
-detailed_results = {}
 
 for ctx_len in CONTEXT_LENGTHS:
     print(f"\n{'='*60}")
